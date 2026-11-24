@@ -11,6 +11,7 @@ import { init } from './init.ts';
 import { qaRelease, release } from './release.ts';
 import { manifestCmd, migrateCmd, upgradeCmd } from './upgrade.ts';
 import { schema } from './schema.ts';
+import { verifyCmd } from './verify.ts';
 import { validate } from './validate.ts';
 
 const HELP = `Premium Website Factory — commandes
@@ -23,6 +24,7 @@ const HELP = `Premium Website Factory — commandes
             assemble, audite et archive une release (ne déploie rien)
   qa-release --release <répertoire>               vérifie empreintes et ré-audite une release
   assets    scan | check [--mode m]              observe les fichiers du registre d'actifs / applique ses règles
+  release-verify --archive <f.tar.gz> --repo <o/r>  vérifie l'attestation de provenance (gh) avant déploiement
   manifest  [--check]                             (re)génère factory.manifest.json (fichiers gérés par l'usine)
   upgrade   --to <v> --from <dir|archive> --sha256 <hex> [--dry-run|--apply]
             met à jour les fichiers gérés sur une branche dédiée ; conflits jamais écrasés
@@ -54,6 +56,8 @@ const { values } = parseArgs({
     from: { type: 'string' },
     sha256: { type: 'string' },
     'dry-run': { type: 'boolean', default: false },
+    archive: { type: 'string' },
+    repo: { type: 'string' },
     apply: { type: 'boolean', default: false },
   },
   strict: true,
@@ -77,6 +81,8 @@ async function main(): Promise<number> {
       return qaRelease({ release: values.release });
     case 'assets':
       return assetsCmd(sub, { mode: values.mode });
+    case 'release-verify':
+      return verifyCmd({ archive: values.archive, repo: values.repo });
     case 'manifest':
       return manifestCmd({ check: values.check });
     case 'upgrade':

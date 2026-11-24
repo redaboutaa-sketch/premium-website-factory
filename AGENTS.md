@@ -28,9 +28,11 @@ Un template : `engine/` (moteur générique, mis à jour par l'usine) + un site 
 | `npm run factory:manifest [-- --check]` | (re)génère `factory.manifest.json` (fichiers gérés) |
 | `npm run factory:upgrade -- --to <v> --from <dir\|archive> --sha256 <hex> [--dry-run\|--apply]` | mise à jour de l'usine sur une branche dédiée ; conflits jamais écrasés ; `site/` jamais touché |
 | `npm run factory:migrate [-- --apply]` | migre le brief vers le schéma courant (sauvegarde conservée) |
+| `.github/workflows/release.yml` (manuel) | build audité + **attestation de provenance** de l'archive, puis brouillon de release dans l'environnement protégé `release`. Ne déploie rien. |
+| `npm run release:verify -- --archive <f.tar.gz> --repo <o/r>` | vérifie l'attestation (gh) ; n'affiche l'empreinte à transmettre au serveur que si elle est vérifiée |
 | `engine/deploy/factory-deploy.sh` (serveur) | install / activate / rollback / list / prune — voir `docs/deploiement.md` |
 
-Pas encore implémentées : `qa` (agrégat), `qa:remote`, profils `apache-shared` et `vps-proxy`, attestation de provenance. Ne pas les présenter comme disponibles.
+Pas encore implémentées : `qa` (agrégat), `qa:remote`, profils `apache-shared` et `vps-proxy`, SBOM. Ne pas les présenter comme disponibles.
 
 Variables non secrètes : `FACTORY_SITE_DIR`, `FACTORY_TARGET` (`preview` par défaut, `production` exige un brief `release`), `FACTORY_OUT_DIR`, `FACTORY_PREVIEW_ORIGIN`, `PW_CHROMIUM_PATH`, `FACTORY_REQUIRE_PHP` (CI : PHP/Composer obligatoires), `FACTORY_PARITY_PHP_IMAGE`.
 
