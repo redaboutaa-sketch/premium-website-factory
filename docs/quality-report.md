@@ -2,6 +2,20 @@
 
 Seuls figurent des résultats de commandes réellement exécutées, avec leur environnement. « Local » = session de développement (conteneur Linux, Node 26.13.1, PHP CLI 8.3.6, Docker 29.9.3, **Chromium 158 préinstallé, hors révision Playwright**). « CI » = GitHub Actions.
 
+## Publication attestée — 2026-11-24
+**Run [45414963273](https://github.com/redaboutaa-sketch/premium-website-factory/actions/runs/45414963273) (`fc6769f`), `release.yml`, démo A en preview : succès.**
+
+| Étape | Résultat observé (journal) |
+|---|---|
+| build : assemblage, audit, `qa:release` | réussi ; release `ostral-demo-preview-b475330de9c6` |
+| empreinte de l'archive | `2e0228089ff5882bd45bfab642b3deed307d11eefd6dbbbcb21cc91b56d05af3` |
+| attestation de provenance | signée ; Rekor logIndex 4080020675 ; attestation du dépôt 71651493 |
+| publish : empreinte après transfert | identique |
+| publish : `gh attestation verify --signer-workflow` | réussi |
+| release GitHub | créée en **brouillon** (archive, `.sha256`, `release.json`) |
+
+Rien déployé. Environnement `release` sans relecteur requis (non activé). `release:verify` côté opérateur : non exécuté.
+
 ## Incrément 4 — 2026-11-24 (registre d'actifs, publication des faits par surface)
 
 | Contrôle | Commande | Environnement | Résultat |
@@ -27,7 +41,7 @@ Décisions en attente (non prises par l'agent) : approbation de l'image de parta
 
 **CI observée — run [45401255936](https://github.com/redaboutaa-sketch/premium-website-factory/actions/runs/45401255936) (`d950a5f`) : succès.** Manifeste vérifié (marqueur `.factory-template`) ; 79 tests sur Node 26.13.1 et 24.22.3 (dont upgrade de bout en bout) ; recette formulaire 62/62 (Chromium 159, Firefox 159, WebKit 27.2) ; **recette de bascule 18/18 sur le runner (1020 requêtes pendant la bascule, 0 erreur ; 2 relances keep-alive hors charge)** ; Lighthouse : 98 / 97 / 100 / 97 / 97 (accueil, détail FR, contact, détail EN, résultat), CLS 0 partout. Le TBT d'environ 190 ms touche cette fois les pages SANS script et pas le contact (0 ms) : la variation observée au run 7 relève du processeur du runner, pas du script du formulaire.
 
-Non couvert : serveur réel, TLS, attestation de provenance signée, profil Apache mutualisé.
+Non couvert : serveur réel, TLS, profil Apache mutualisé. (Attestation de provenance : voir la section « Publication attestée ».)
 
 ## Incrément 3 — 2026-11-24 (pages de détail, laboratoire de performance, texte agrandi)
 

@@ -1,6 +1,6 @@
 # ADR 0005 — Publication attestée d'une release
 
-Statut : accepté · 2026-11-24 · workflow écrit et testé structurellement ; **première exécution réelle soumise à l'accord du propriétaire** (voir plus bas).
+Statut : accepté · 2026-11-24 · workflow écrit et testé structurellement ; première exécution réelle effectuée avec l'accord du propriétaire (démo A, preview) — voir « Observé ».
 
 ## Chaîne
 1. `.github/workflows/release.yml`, **déclenchement manuel uniquement** (`workflow_dispatch` : site, cible). Jamais sur pull request ni sur push.
@@ -17,3 +17,10 @@ Elle prouve que ces octets ont été produits par ce workflow, dans ce dépôt, 
 
 ## Testé
 `engine/tests/workflows.test.ts` (actions épinglées par SHA, droits, déclencheurs, environnement, vérification avant création, aucune interpolation d'entrée dans un script, aucun `continue-on-error`) ; `tests/integration/verify.test.ts` (gh simulé : attestation valide, attestation d'une autre archive, échec, gh absent).
+
+## Observé — run [45414963273](https://github.com/redaboutaa-sketch/premium-website-factory/actions/runs/45414963273) (`fc6769f`, 2026-11-24)
+Entrées : `site=examples/fixture-a-services`, `target=preview` (déclenchement autorisé explicitement pour cette seule exécution).
+- `build` : succès. Release `ostral-demo-preview-b475330de9c6`, archive sha256 `2e0228089ff5882bd45bfab642b3deed307d11eefd6dbbbcb21cc91b56d05af3`. Attestation signée, inscrite au journal Rekor (logIndex 4080020675) et au dépôt (attestation 71651493).
+- `publish` : succès. Empreinte revérifiée après transfert, `gh attestation verify --signer-workflow …/release.yml` réussi, release créée **en brouillon** (non publiée, aucun tag tant qu'elle reste brouillon).
+- Rien n'a été déployé. L'environnement `release` s'est exécuté **sans relecteur requis** (protection toujours non activée).
+- Non exécuté : `release:verify` côté opérateur sur une copie téléchargée de l'archive.
