@@ -70,7 +70,9 @@ const pass = randomBytes(12).toString('hex');
 const mailDir = join(work, 'mailbox');
 const capture = await startCapture({ port: 2525, dir: mailDir, username: user, password: pass });
 const mails = () => (existsSync(mailDir) ? readdirSync(mailDir).filter((f) => f.endsWith('.eml')).sort() : []);
-const resetRate = () => rmSync(join(varDir, 'ratelimit'), { recursive: true, force: true });
+// Les fichiers du compteur appartiennent à www-data (conteneur) : on les efface DEPUIS le conteneur,
+// sans dépendre des droits de l'utilisateur qui lance la recette (root en local, runner en CI).
+const resetRate = () => docker(['exec', 'factory-recipe-php', 'rm', '-rf', '/srv/site/var/ratelimit']);
 
 cleanup();
 let failed = false;
@@ -267,6 +269,6 @@ try {
   await capture.close();
 }
 const ko = report.filter((x) => !x.ok);
-console.log(`\n  ${report.length - ko.length}/${report.length} contrôles réussis`);
+console.log(`\n  ${report.length - ko.length}/${report.length} contrôles réussis${failed ? ' — RECETTE INTERROMPUE (erreur ci-dessus), contrôles suivants non exécutés' : ''}`);
 process.exit(failed || ko.length ? 1 : 0);
 
