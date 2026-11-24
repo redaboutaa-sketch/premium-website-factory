@@ -2,6 +2,18 @@
 
 Seuls figurent des résultats de commandes réellement exécutées, avec leur environnement. « Local » = session de développement (conteneur Linux, Node 26.13.1, PHP CLI 8.3.6, Docker 29.9.3, **Chromium 158 préinstallé, hors révision Playwright**). « CI » = GitHub Actions.
 
+## Incrément 5 — 2026-11-24 (bascule, rollback, mise à jour de l'usine)
+
+| Contrôle | Commande | Environnement | Résultat |
+|---|---|---|---|
+| Bascule / rollback / intégrité | `npm run qa:deploy` | local : `factory-deploy.sh` exécuté dans le conteneur nginx 1.30.8 (busybox), PHP-FPM 8.4.28, 3 releases réelles | **18/18** : v1 → v2 sous trafic (484 requêtes, 0 erreur), pages ET PHP basculés sans redémarrer PHP-FPM, rollback puis réactivation, archive altérée / empreinte erronée / empreinte absente refusées, v3 défaillante → retour automatique, liste, purge, journal. 3 relances keep-alive côté client de test hors charge (comportement attendu après `nginx -s reload`, documenté) |
+| Mise à jour de l'usine | `vitest run tests/integration/upgrade.test.ts` | local, copie client git réelle | 3/3 : conflit détecté et jamais écrasé ; empreinte / version / archive erronées refusées ; application sur `factory-upgrade/0.2.0`, `site/` inchangé, site toujours valide ; retour arrière |
+| Plan et migrations | `engine/tests/upgrade-plan.test.ts`, `engine/tests/migrations.test.ts` | local | 10/10 |
+| Suite complète | `npm test` | local | 10 fichiers, 79 tests |
+| Manifeste | `factory:manifest --check` | local | 149 fichiers gérés, à jour |
+
+Non couvert : serveur réel, TLS, attestation de provenance signée, profil Apache mutualisé.
+
 ## Incrément 3 — 2026-11-24 (pages de détail, laboratoire de performance, texte agrandi)
 
 | Contrôle | Commande | Environnement | Résultat |

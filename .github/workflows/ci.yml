@@ -43,6 +43,12 @@ jobs:
       - run: npm run check
         env:
           FACTORY_SITE_DIR: examples/fixture-a-services
+      # Dépôt-template uniquement (marqueur .factory-template) : le manifeste doit
+      # décrire exactement les fichiers publiés. Dans une copie client, un fichier
+      # géré modifié localement est légitime ; factory:upgrade le traitera en conflit.
+      - name: Manifeste de l'usine à jour
+        if: hashFiles('.factory-template') != ''
+        run: node engine/cli/main.ts manifest --check
       - run: npm test
       - name: Build fixture A (preview)
         run: npm run build
@@ -88,6 +94,8 @@ jobs:
         run: npm run qa:release -- --release "$(ls -d .generated/releases/*/ | head -1)"
       - name: Recette nginx + PHP-FPM, trois moteurs
         run: npm run qa:recipe -- --release "$(ls -d .generated/releases/*/ | head -1)" --browsers chromium,firefox,webkit
+      - name: Bascule, rollback et refus d'intégrité (nginx + PHP-FPM, sous trafic)
+        run: npm run qa:deploy
       - name: Lighthouse sur la release servie par nginx (médiane de 3, mobile)
         run: npm run qa:perf -- --release "$(ls -d .generated/releases/*/ | head -1)" --pages /,/prestations/diagnostic-achats/,/contact/,/en/services/procurement-review/,/contact/envoye/
       - name: Revue visuelle outillée et texte agrandi à 200 % (Chromium verrouillé)
@@ -103,6 +111,7 @@ jobs:
           name: recette-${{ github.sha }}
           path: |
             .generated/reports/
+            .generated/deploy-recipe/deploy.log.copy
             .generated/review/
           if-no-files-found: warn
           retention-days: 14

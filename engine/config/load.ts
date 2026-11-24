@@ -6,7 +6,7 @@
 import { readFile } from 'node:fs/promises';
 import { join, resolve } from 'node:path';
 import { parse as parseYaml, YAMLParseError } from 'yaml';
-import { Brief, type Mode } from '../contracts/brief.ts';
+import { Brief, SCHEMA_VERSION, type Mode } from '../contracts/brief.ts';
 import { type Issue, fromZod, issue } from '../contracts/issues.ts';
 import { checkRules } from '../contracts/rules.ts';
 
@@ -28,6 +28,10 @@ export function parseBrief(text: string, mode: Mode): LoadResult {
   } catch (e) {
     const msg = e instanceof YAMLParseError ? e.message.split('\n')[0] ?? e.message : String(e);
     return { ok: false, issues: [issue('(fichier)', 'yaml.syntax', 'structure', msg, 'Corriger la syntaxe YAML.')] };
+  }
+  const version = (raw as { schemaVersion?: unknown } | null)?.schemaVersion;
+  if (typeof version === 'number' && version < SCHEMA_VERSION) {
+    return { ok: false, issues: [issue('schemaVersion', 'schema.outdated', 'structure', `brief au schéma ${version}, l’usine attend ${SCHEMA_VERSION}`, 'Migrer : npm run factory:migrate -- --apply (sauvegarde conservée).', version)] };
   }
   const parsed = Brief.safeParse(raw);
   if (!parsed.success) return { ok: false, issues: fromZod(parsed.error, raw) };

@@ -50,7 +50,10 @@ export function renderNginx(config: ResolvedConfig, o: NginxOptions): string {
         limit_except POST GET { deny all; }
         client_max_body_size ${Math.ceil(o.maxBodyBytes / 1024)}k;
         include fastcgi_params;
-        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+        # Chemin RÉEL résolu par nginx à chaque requête : après bascule du lien
+        # « current », PHP exécute la nouvelle release malgré son cache de chemins.
+        fastcgi_param SCRIPT_FILENAME $realpath_root$fastcgi_script_name;
+        fastcgi_param DOCUMENT_ROOT $realpath_root;
         fastcgi_param HTTP_PROXY "";
         fastcgi_pass ${fpm};
 ${headers('        ', ['add_header Cache-Control "no-store" always;'])}

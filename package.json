@@ -22,7 +22,11 @@
     "release": "node engine/cli/main.ts release",
     "qa:release": "node engine/cli/main.ts qa-release",
     "qa:recipe": "node tests/recipe/nginx-php.ts",
-    "qa:perf": "node tests/perf/lighthouse.ts"
+    "qa:perf": "node tests/perf/lighthouse.ts",
+    "factory:manifest": "node engine/cli/main.ts manifest",
+    "factory:upgrade": "node engine/cli/main.ts upgrade",
+    "factory:migrate": "node engine/cli/main.ts migrate",
+    "qa:deploy": "node tests/recipe/deploy.ts"
   },
   "dependencies": {
     "astro": "7.4.13",

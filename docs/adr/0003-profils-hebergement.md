@@ -15,5 +15,5 @@ Générateur pur `engine/generators/nginx.ts` : en-têtes répétés dans chaque
 | Config générée | oui | à faire | à faire |
 | Testée (`nginx -t` + recette conteneurs) | oui, HTTP local | non | non |
 | TLS | gabarit généré, **non testé** | — | terminé par le proxy |
-| Bascule atomique / rollback | disposition `releases/<id>` + lien `current` reproduite en recette ; procédure serveur à écrire (incr. 5) | — | — |
+| Bascule atomique / rollback | `engine/deploy/factory-deploy.sh` : renommage atomique du lien `current`, retour automatique si santé KO ; **testé en conteneurs** (`qa:deploy`) | — (pas de bascule atomique par FTP) | même outil, rechargement du proxy existant à adapter |
 | Vérifié en production | **non** | non | non |

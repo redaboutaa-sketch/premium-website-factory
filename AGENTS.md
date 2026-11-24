@@ -23,7 +23,13 @@ Un template : `engine/` (moteur générique, mis à jour par l'usine) + un site 
 | `npm run qa:perf -- --release <dir> [--runs 3] [--pages /,/contact/]` | Lighthouse 13 (mobile, médiane de 3) sur la release servie par nginx ; budgets perf ≥ 95, JS ≤ 60 Ko, accueil ≤ 1 Mo |
 | `node tests/visual/review.ts --pages …` / `node tests/visual/text-zoom.ts --pages …` | revue outillée (360/390/768/1440) ; texte agrandi à 200 % (après `npm run build`) |
 
-Pas encore implémentées : `qa` (agrégat), `qa:remote`, `factory:upgrade`, profils `apache-shared` et `vps-proxy`, bascule/rollback serveur (incrément 5). Ne pas les présenter comme disponibles.
+| `npm run qa:deploy` | recette de bascule : install, bascule sous trafic, rollback, refus d'intégrité, retour automatique (conteneurs) |
+| `npm run factory:manifest [-- --check]` | (re)génère `factory.manifest.json` (fichiers gérés) |
+| `npm run factory:upgrade -- --to <v> --from <dir\|archive> --sha256 <hex> [--dry-run\|--apply]` | mise à jour de l'usine sur une branche dédiée ; conflits jamais écrasés ; `site/` jamais touché |
+| `npm run factory:migrate [-- --apply]` | migre le brief vers le schéma courant (sauvegarde conservée) |
+| `engine/deploy/factory-deploy.sh` (serveur) | install / activate / rollback / list / prune — voir `docs/deploiement.md` |
+
+Pas encore implémentées : `qa` (agrégat), `qa:remote`, profils `apache-shared` et `vps-proxy`, attestation de provenance. Ne pas les présenter comme disponibles.
 
 Variables non secrètes : `FACTORY_SITE_DIR`, `FACTORY_TARGET` (`preview` par défaut, `production` exige un brief `release`), `FACTORY_OUT_DIR`, `FACTORY_PREVIEW_ORIGIN`, `PW_CHROMIUM_PATH`, `FACTORY_REQUIRE_PHP` (CI : PHP/Composer obligatoires), `FACTORY_PARITY_PHP_IMAGE`.
 
