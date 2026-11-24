@@ -23,4 +23,5 @@ Entrées : `site=examples/fixture-a-services`, `target=preview` (déclenchement 
 - `build` : succès. Release `ostral-demo-preview-b475330de9c6`, archive sha256 `2e0228089ff5882bd45bfab642b3deed307d11eefd6dbbbcb21cc91b56d05af3`. Attestation signée, inscrite au journal Rekor (logIndex 4080020675) et au dépôt (attestation 71651493).
 - `publish` : succès. Empreinte revérifiée après transfert, `gh attestation verify --signer-workflow …/release.yml` réussi, release créée **en brouillon** (non publiée, aucun tag tant qu'elle reste brouillon).
 - Rien n'a été déployé. L'environnement `release` s'est exécuté **sans relecteur requis** (protection toujours non activée).
-- Non exécuté : `release:verify` côté opérateur sur une copie téléchargée de l'archive.
+- `release:verify` côté opérateur (session de développement, archive téléchargée depuis le brouillon, sha256 identique) : **provenance vérifiée**, exit 0, signataire `…/.github/workflows/release.yml`. Copie altérée d'un octet : refusée (exit 1, aucune attestation pour cette empreinte).
+- Réseau requis par `gh attestation verify` : `api.github.com`, `tuf-repo-cdn.sigstore.dev`, `tuf-repo.github.com`, `tmaproduction.blob.core.windows.net` (stockage des bundles). Sans eux, la commande échoue fermée.

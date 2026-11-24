@@ -15,7 +15,7 @@
     "docs/adr/0002-formulaire-email.md": "26c401c5ad4cc00841f314a90b6b1c65731773fecb23f389bb00c2682a7cd252",
     "docs/adr/0003-profils-hebergement.md": "23796c8b59fc34f546a518480258e30e16733a74aae8868e4fa5c71496f66bea",
     "docs/adr/0004-actifs-et-publication.md": "48b3b1c5933814b29438488f83cd74016cce531f92fac763c9dc8c30c66e1f5e",
-    "docs/adr/0005-publication-attestee.md": "e43fd63ecd59e34a3d57bd88a92a39938712cdd0f8ab984f919ef9d3f1e1c5f6",
+    "docs/adr/0005-publication-attestee.md": "5a6540f7b4e8b72ef355651c7b0af07d6b6ea29e34b65e735576263a8116aa5a",
     "docs/adr/web-platform.md": "c7246f24ad7f61a046bb8f91ec343001a6d11a1bd652f14f2882ffb33ac449f6",
     "engine/assets/contract.ts": "3725edb3326ae112460271e88628492e2784b3653422972be1375b58b1b0ed61",
     "engine/assets/index.ts": "8e58bf7abf62cba0eb32a8980fe9de99f53c72c21d0aa71ad60da3176dbff09d",

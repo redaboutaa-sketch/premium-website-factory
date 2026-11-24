@@ -14,7 +14,7 @@ Seuls figurent des résultats de commandes réellement exécutées, avec leur en
 | publish : `gh attestation verify --signer-workflow` | réussi |
 | release GitHub | créée en **brouillon** (archive, `.sha256`, `release.json`) |
 
-Rien déployé. Environnement `release` sans relecteur requis (non activé). `release:verify` côté opérateur : non exécuté.
+Rien déployé. Environnement `release` sans relecteur requis (non activé). `release:verify` côté opérateur sur l'archive téléchargée du brouillon : **vérifiée** (exit 0, même sha256) ; copie altérée : refusée (exit 1). Premier essai refusé faute d'accès réseau aux racines TUF Sigstore et au stockage des bundles — échec fermé, comme prévu ; hôtes ajoutés à l'environnement de développement.
 
 ## Incrément 4 — 2026-11-24 (registre d'actifs, publication des faits par surface)
 

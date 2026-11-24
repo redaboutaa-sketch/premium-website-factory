@@ -16,7 +16,7 @@ nginx : `/etc/nginx/conf.d/<site>.conf` → lien vers `/srv/<site>/current/confi
 
 ## Étapes
 1. **Construire et auditer** (poste ou CI) : `npm run release -- --profile vps-nginx --target production`, puis `npm run qa:release -- --release <dir>`.
-2. **Vérifier la provenance, puis transmettre l'empreinte** : pour une release produite par `.github/workflows/release.yml`, `npm run release:verify -- --archive <id>.tar.gz --repo <propriétaire/dépôt>` (gh requis sur le poste de l'opérateur) n'affiche l'empreinte que si l'attestation est vérifiée et porte sur ces octets. Sans attestation, l'empreinte doit venir d'un canal de confiance distinct de l'archive. Une empreinte téléchargée à côté de l'archive ne prouve pas son authenticité.
+2. **Vérifier la provenance, puis transmettre l'empreinte** : pour une release produite par `.github/workflows/release.yml`, `npm run release:verify -- --archive <id>.tar.gz --repo <propriétaire/dépôt>` (gh authentifié requis sur le poste de l’opérateur, avec accès réseau à `api.github.com`, `tuf-repo-cdn.sigstore.dev`, `tuf-repo.github.com` et `tmaproduction.blob.core.windows.net` ; sinon la commande échoue fermée) n'affiche l'empreinte que si l'attestation est vérifiée et porte sur ces octets. Sans attestation, l'empreinte doit venir d'un canal de confiance distinct de l'archive. Une empreinte téléchargée à côté de l'archive ne prouve pas son authenticité.
 3. **Installer et activer** (sur le serveur) :
    ```
    FACTORY_ROOT=/srv/<site> factory-deploy install --archive <id>.tar.gz --sha256 <hex> --activate \
