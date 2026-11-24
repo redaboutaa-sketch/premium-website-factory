@@ -1,0 +1,36 @@
+---
+/**
+ * Gabarit minimal du site de démonstration (incrément 1). La composition
+ * définitive suivra la piste choisie par le propriétaire (porte G2).
+ */
+import config from 'virtual:factory/config';
+
+interface Props {
+  title: string;
+  lang: string;
+  path: string;
+}
+const { title, lang, path } = Astro.props;
+const canonical = new URL(path, config.origin).href;
+---
+
+<!doctype html>
+<html lang={lang}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content={config.indexable ? 'index, follow' : 'noindex, nofollow'} />
+    <link rel="canonical" href={canonical} />
+    <title>{title}</title>
+  </head>
+  <body>
+    {config.fictional && <p class="demo">Démonstration fictive — {config.brand} n’existe pas. / Fictional demo — {config.brand} does not exist.</p>}
+    <main><slot /></main>
+  </body>
+</html>
+
+<style>
+  :global(body) { margin: 0; font-family: system-ui, sans-serif; line-height: 1.55; color: #1c1b18; background: #fff; }
+  .demo { margin: 0; padding: 0.5rem 1rem; background: #ebe5d8; font-size: 0.9rem; }
+  main { max-width: 44rem; margin: 0 auto; padding: 2rem 1rem; }
+</style>
