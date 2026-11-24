@@ -12,6 +12,8 @@ Seuls figurent des résultats de commandes réellement exécutées, avec leur en
 | Suite complète | `npm test` | local | 10 fichiers, 79 tests |
 | Manifeste | `factory:manifest --check` | local | 149 fichiers gérés, à jour |
 
+**CI observée — run [45401255936](https://github.com/redaboutaa-sketch/premium-website-factory/actions/runs/45401255936) (`d950a5f`) : succès.** Manifeste vérifié (marqueur `.factory-template`) ; 79 tests sur Node 26.13.1 et 24.22.3 (dont upgrade de bout en bout) ; recette formulaire 62/62 (Chromium 159, Firefox 159, WebKit 27.2) ; **recette de bascule 18/18 sur le runner (1020 requêtes pendant la bascule, 0 erreur ; 2 relances keep-alive hors charge)** ; Lighthouse : 98 / 97 / 100 / 97 / 97 (accueil, détail FR, contact, détail EN, résultat), CLS 0 partout. Le TBT d'environ 190 ms touche cette fois les pages SANS script et pas le contact (0 ms) : la variation observée au run 7 relève du processeur du runner, pas du script du formulaire.
+
 Non couvert : serveur réel, TLS, attestation de provenance signée, profil Apache mutualisé.
 
 ## Incrément 3 — 2026-11-24 (pages de détail, laboratoire de performance, texte agrandi)
