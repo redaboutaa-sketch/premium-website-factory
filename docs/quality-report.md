@@ -14,12 +14,23 @@ Seuls figurent des résultats de commandes réellement exécutées, avec leur en
 | Recette nginx + PHP-FPM | `npm run qa:recipe -- --release <dir>` | local : nginx 1.30.8 + PHP 8.4.28 (images épinglées par digest), Chromium 158 | 44/44 contrôles (rapport : `.generated/reports/<id>/recipe.json`, non versionné) |
 | Revue visuelle outillée | `node tests/visual/review.ts` | local, Chromium 158 | 5 pages × 4 largeurs : 0 débordement, 0 violation CSP, cibles conformes |
 | Fixture B | `astro build` | local | construite sans modification du moteur ; aucune fuite croisée (test) |
-| CI complète | `.github/workflows/ci.yml` | CI | voir section CI ci-dessous |
+| CI complète | `.github/workflows/ci.yml` | CI | run 4 : succès (voir ci-dessous) |
 
 ## CI observée
 | Run | Commit | Jobs | Conclusion |
 |---|---|---|---|
 | [45382410714](https://github.com/redaboutaa-sketch/premium-website-factory/actions/runs/45382410714) | `09ceb96` (incrément 1) | validate (Node 26.13.1, 24.22.3) | succès |
+| [45392424365](https://github.com/redaboutaa-sketch/premium-website-factory/actions/runs/45392424365) | `f96a6e4` | — | annulé (remplacé par le run 3, `cancel-in-progress`) |
+| [45392531749](https://github.com/redaboutaa-sketch/premium-website-factory/actions/runs/45392531749) | `3233a79` | validate ×2 : succès · recipe : **échec** après 26 contrôles réussis — le script de recette (utilisateur non root) ne pouvait pas effacer le compteur de débit créé par `www-data` ; défaut du script, pas de l'endpoint | échec |
+| [45393386104](https://github.com/redaboutaa-sketch/premium-website-factory/actions/runs/45393386104) | `0f6e929` | validate (Node 26.13.1, 24.22.3) · recipe | **succès** |
+
+Détail du run 4, job `recipe` (journal GitHub Actions) :
+- navigateurs de la révision Playwright 1.65.1 : **Chromium 159.0.8154.6, Firefox 159.0, WebKit 27.2** ;
+- parité JS/PHP sur l'image PHP 8.4 : réussie ;
+- release assemblée et auditée, `qa:release` (empreintes + ré-audit) : réussi ; 131 fichiers (archive Composer « dist » disponible sur le runner ; 288 en local avec repli sur les sources) ;
+- recette nginx 1.30.8 + PHP 8.4.28 : **62/62 contrôles** (HTTP, en-têtes, surfaces non servies, rejets, capture SMTP, panne de transport, parcours sans et avec JavaScript sur les trois moteurs, limitation de débit, journaux sans corps de message) ;
+- revue visuelle (Chromium 159) : 5 pages × 4 largeurs, aucun problème relevé ;
+- rapports et captures : artefact `recette-0f6e929…` (rétention 14 jours).
 
 ## Ce qui reste `pending_external` ou non couvert
 - Réception dans une boîte réelle, en-têtes SPF/DKIM/DMARC, DNS, TLS : aucun domaine ni boîte autorisés (démo fictive).
