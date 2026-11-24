@@ -46,6 +46,12 @@ describe('fixture B avec le même moteur', () => {
     expect(existsSync(join(OUT, 'b', 'api'))).toBe(false);
     expect(b.includes('/api/contact.php')).toBe(false);
   });
+  it('actifs de B : schémas approuvés émis ; benchmark exclu et photo en conflit absents', () => {
+    const files = readdirSync(join(OUT, 'b', '_astro'));
+    for (const stem of ['bolt', 'nut', 'washer']) expect(files.some((f) => f.startsWith(`${stem}.`)), stem).toBe(true);
+    expect(files.some((f) => /benchmark-capture|atelier-declare-photo/.test(f))).toBe(false);
+    expect(b).not.toMatch(/benchmark-capture|atelier-declare-photo|Fournisseur fictif|données de test/);
+  });
   it('fait withheld de B absent de l’artefact', () => {
     expect(b.includes('twelve percent')).toBe(false);
   });

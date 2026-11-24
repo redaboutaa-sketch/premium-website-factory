@@ -26,7 +26,8 @@
     "factory:manifest": "node engine/cli/main.ts manifest",
     "factory:upgrade": "node engine/cli/main.ts upgrade",
     "factory:migrate": "node engine/cli/main.ts migrate",
-    "qa:deploy": "node tests/recipe/deploy.ts"
+    "qa:deploy": "node tests/recipe/deploy.ts",
+    "factory:assets": "node engine/cli/main.ts assets"
   },
   "dependencies": {
     "astro": "7.4.13",

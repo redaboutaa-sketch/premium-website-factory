@@ -6,6 +6,7 @@
 import { spawnSync } from 'node:child_process';
 import { cpSync, existsSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { join, resolve } from 'node:path';
+import { parse, stringify } from 'yaml';
 import { afterAll, describe, expect, it } from 'vitest';
 import { loadBrief } from '../../engine/config/load.ts';
 import { resolveConfig } from '../../engine/config/resolve.ts';
@@ -58,6 +59,22 @@ describe.skipIf(!tools)('release assemblée', () => {
     const rows = await auditRelease(copy, { brief: loaded.brief, config: resolveConfig(loaded.brief, { target: 'preview', localPreviewOrigin: profile.localPreviewOrigin }), form: loadFormContract(SITE_A), target: 'preview' });
     const failed = rows.filter((x) => !x.ok).map((x) => x.id);
     expect(failed).toEqual(expect.arrayContaining(['public.php-only-endpoint', 'public.forbidden-files', 'public.no-leaks']));
+  });
+
+  it('release de production : sitemap, robots d’exploration, pages utilitaires hors sitemap', async () => {
+    const dir = join(OUT, 'site-prod');
+    cpSync(SITE_A, dir, { recursive: true, filter: (src) => !src.includes('/design/captures') });
+    const file = join(dir, 'brief', 'brief.yaml');
+    const b = parse(readFileSync(file, 'utf8'));
+    b.mode = 'release';
+    for (const f of Object.values(b.facts as Record<string, any>)) if (f.publication === 'public' && f.status !== 'confirmed') Object.assign(f, { status: 'confirmed', value: f.value ?? 'valeur de test', sourceRefs: ['test'] });
+    b.design.renderApproval = { approvedBy: 'test', approvedOn: '2026-11-24', scope: 'test' };
+    b.delivery.reviewer = 'test';
+    writeFileSync(file, stringify(b));
+    const r = await assembleRelease({ siteDir: dir, target: 'production', outBase: join(OUT, 'prod'), profile: { ...profile, localPreviewOrigin: undefined }, log: quiet });
+    const ids = r.audit.map((x) => x.id);
+    expect(ids).toEqual(expect.arrayContaining(['seo.home-indexable', 'seo.sitemap', 'seo.sitemap-excludes-noindex', 'seo.robots-txt', 'public.no-prototypes']));
+    expect(r.audit.filter((x) => !x.ok)).toEqual([]);
   });
 
   it('B : release sans formulaire → aucun PHP, aucun app/', async () => {

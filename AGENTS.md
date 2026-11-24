@@ -24,6 +24,7 @@ Un template : `engine/` (moteur générique, mis à jour par l'usine) + un site 
 | `node tests/visual/review.ts --pages …` / `node tests/visual/text-zoom.ts --pages …` | revue outillée (360/390/768/1440) ; texte agrandi à 200 % (après `npm run build`) |
 
 | `npm run qa:deploy` | recette de bascule : install, bascule sous trafic, rollback, refus d'intégrité, retour automatique (conteneurs) |
+| `npm run factory:assets -- scan` / `-- check [--mode m]` | observe les fichiers du registre d'actifs (écrit `observed`) / applique ses règles |
 | `npm run factory:manifest [-- --check]` | (re)génère `factory.manifest.json` (fichiers gérés) |
 | `npm run factory:upgrade -- --to <v> --from <dir\|archive> --sha256 <hex> [--dry-run\|--apply]` | mise à jour de l'usine sur une branche dédiée ; conflits jamais écrasés ; `site/` jamais touché |
 | `npm run factory:migrate [-- --apply]` | migre le brief vers le schéma courant (sauvegarde conservée) |
@@ -34,13 +35,13 @@ Pas encore implémentées : `qa` (agrégat), `qa:remote`, profils `apache-shared
 Variables non secrètes : `FACTORY_SITE_DIR`, `FACTORY_TARGET` (`preview` par défaut, `production` exige un brief `release`), `FACTORY_OUT_DIR`, `FACTORY_PREVIEW_ORIGIN`, `PW_CHROMIUM_PATH`, `FACTORY_REQUIRE_PHP` (CI : PHP/Composer obligatoires), `FACTORY_PARITY_PHP_IMAGE`.
 
 ## Invariants
-1. `engine/` n'importe jamais `site/` ni `examples/` ; un site n'importe que `@engine/<module>` et `virtual:factory/config` (test : `engine/tests/boundaries.test.ts`).
+1. `engine/` n'importe jamais `site/` ni `examples/` ; un site n'importe que `@engine/<module>` et les modules `virtual:factory/config`, `virtual:factory/form`, `virtual:factory/assets` (test : `engine/tests/boundaries.test.ts`).
 2. Le brief ne contient aucun secret : seulement des références `env:NOM`. Le schéma est strict.
 3. Les pages ne lisent que la configuration résolue (`virtual:factory/config`) : faits projetés selon `publication`, jamais d'adresse interne.
 4. Un fait `proposed` n'est jamais promu `confirmed` par un agent. Statut et publication sont des décisions humaines.
 5. Le domaine web ne détermine ni l'expéditeur, ni le destinataire, ni la preview.
 6. Pas de `unsafe-inline` / `unsafe-eval` en CSP ; navigation MPA (pas de `<ClientRouter />`, incompatible avec la CSP native d'Astro).
-7. Aucun actif sans droits établis ; aucune image produit générée ou retouchée de façon trompeuse.
+7. Aucun actif sans droits établis ; aucune image produit générée ou retouchée de façon trompeuse. Les images passent par `<site>/assets/registry.yaml` ; une approbation (`status: approved`, `decision`) est une décision humaine, jamais prise par un agent.
 8. Aucune réussite déclarée sans sortie de commande observée ; les vérifications externes restent `pending_external`.
 9. Publication réelle : uniquement sur autorisation explicite pour cette cible et cette version.
 

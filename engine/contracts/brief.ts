@@ -156,6 +156,8 @@ const Design = z.strictObject({
   antiReferences: z.array(safeText(400)).default([]),
   brandConstraints: z.array(safeText(400)).default([]),
   availableResources: z.array(safeText(400)).default([]),
+  /** Le propriétaire autorise-t-il des illustrations d'ambiance GÉNÉRÉES (jamais présentées comme réelles) ? */
+  allowGeneratedIllustrations: z.boolean().default(false),
   /**
    * Porte G2 en DEUX décisions humaines distinctes :
    *  - `selectedDirection` : choix d'une piste (orientation) ;

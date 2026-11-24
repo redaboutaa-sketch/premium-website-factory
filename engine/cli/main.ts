@@ -5,6 +5,7 @@
  * (`erasableSyntaxOnly` dans tsconfig), sans enum ni namespace.
  */
 import { parseArgs } from 'node:util';
+import { assetsCmd } from './assets.ts';
 import { doctor } from './doctor.ts';
 import { init } from './init.ts';
 import { qaRelease, release } from './release.ts';
@@ -21,6 +22,7 @@ const HELP = `Premium Website Factory — commandes
   release   --profile vps-nginx [--target preview|production] [--out <dir>] [--profile-json <fichier>]
             assemble, audite et archive une release (ne déploie rien)
   qa-release --release <répertoire>               vérifie empreintes et ré-audite une release
+  assets    scan | check [--mode m]              observe les fichiers du registre d'actifs / applique ses règles
   manifest  [--check]                             (re)génère factory.manifest.json (fichiers gérés par l'usine)
   upgrade   --to <v> --from <dir|archive> --sha256 <hex> [--dry-run|--apply]
             met à jour les fichiers gérés sur une branche dédiée ; conflits jamais écrasés
@@ -29,7 +31,10 @@ const HELP = `Premium Website Factory — commandes
 Variables : FACTORY_SITE_DIR (répertoire du site, défaut site/), FACTORY_TARGET (preview|production).
 Utilisation via npm : npm run factory:validate -- --mode release`;
 
-const [command, ...rest] = process.argv.slice(2);
+const [command, ...rawRest] = process.argv.slice(2);
+// Sous-commande positionnelle éventuelle (ex. `assets scan`).
+const sub = rawRest[0] && !rawRest[0].startsWith('-') ? rawRest[0] : undefined;
+const rest = sub ? rawRest.slice(1) : rawRest;
 
 const { values } = parseArgs({
   args: rest,
@@ -70,6 +75,8 @@ async function main(): Promise<number> {
       return release({ profile: values.profile, target: values.target, out: values.out, profileJson: values['profile-json'] });
     case 'qa-release':
       return qaRelease({ release: values.release });
+    case 'assets':
+      return assetsCmd(sub, { mode: values.mode });
     case 'manifest':
       return manifestCmd({ check: values.check });
     case 'upgrade':

@@ -386,6 +386,10 @@
             "maxLength": 400
           }
         },
+        "allowGeneratedIllustrations": {
+          "default": false,
+          "type": "boolean"
+        },
         "selectedDirection": {
           "default": null,
           "anyOf": [

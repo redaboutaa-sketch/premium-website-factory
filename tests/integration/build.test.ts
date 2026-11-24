@@ -94,4 +94,50 @@ describe('astro build direct', () => {
     expect(r.code).not.toBe(0);
     expect(r.log).toContain('email.recipient');
   });
+
+  it('production : sitemap sans pages noindex, robots.txt d’exploration', () => {
+    const r = astroBuild(site('crawl-prod', releaseReady), 'production');
+    expect(r.code, r.log).toBe(0);
+    const sitemap = readFileSync(join(r.out, 'sitemap.xml'), 'utf8');
+    expect(sitemap).toContain('<loc>https://www.example.com/</loc>');
+    expect(sitemap).toContain('<loc>https://www.example.com/prestations/diagnostic-achats/</loc>');
+    expect(sitemap).not.toContain('/contact/envoye/');
+    expect(sitemap).not.toContain('/prototypes/');
+    expect(readFileSync(join(r.out, 'robots.txt'), 'utf8')).toContain('Sitemap: https://www.example.com/sitemap.xml');
+  });
+
+  it('un fait autorisé seulement en html, recopié dans une balise meta : échec', () => {
+    const page = `---\n---\n<html lang="fr"><head><meta name="description" content="Écrire à contact@example.com" /></head><body><p>contact@example.com</p></body></html>\n`;
+    const r = astroBuild(site('surface-meta', (b) => (b.facts['contact.email'].surfaces = ['html']), ['meta-fuite.astro', page]), 'preview');
+    expect(r.code).not.toBe(0);
+    expect(r.log).toContain('interdit en meta');
+  });
+
+  it('une page qui demande un actif non approuvé : échec du build', () => {
+    const page = `---\nimport { asset } from 'virtual:factory/assets';\nconst a = asset('partage-defaut');\n---\n<img src={a.src.src} alt="" />\n`;
+    const r = astroBuild(site('asset-candidate', undefined, ['actif.astro', page]), 'preview');
+    expect(r.code).not.toBe(0);
+    expect(r.log).toContain('non publiable');
+  });
+
+  it('image déposée hors registre dans public/ : échec du build', () => {
+    const dir = site('asset-stray');
+    mkdirSync(join(dir, 'public'), { recursive: true });
+    cpSync(join(FIXTURE, 'assets', 'files', 'partage-defaut.png'), join(dir, 'public', 'image.png'));
+    const r = astroBuild(dir, 'preview');
+    expect(r.code).not.toBe(0);
+    expect(r.log).toContain('Images hors registre');
+  });
+
+  it('actif approuvé (décision du test) : og:image émise ; non approuvé : ni balise ni fichier', () => {
+    const before = astroBuild(site('og-candidate'), 'preview');
+    expect(before.code, before.log).toBe(0);
+    expect(readFileSync(join(before.out, 'index.html'), 'utf8')).not.toContain('og:image');
+    const dir = site('og-approved');
+    const reg = join(dir, 'assets', 'registry.yaml');
+    writeFileSync(reg, readFileSync(reg, 'utf8').replace('status: candidate\n    decision: null', "status: approved\n    decision: { by: test d'intégration, on: '2026-11-24' }"));
+    const after = astroBuild(dir, 'preview');
+    expect(after.code, after.log).toBe(0);
+    expect(readFileSync(join(after.out, 'index.html'), 'utf8')).toMatch(/og:image" content="http:\/\/localhost:4321\/_astro\/partage-defaut\.[^"]+\.(png|webp)"/);
+  });
 });

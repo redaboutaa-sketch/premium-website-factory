@@ -18,11 +18,17 @@ import { type ResolvedConfig, type Target, resolveConfig } from '../config/resol
 import { findLeaks } from './leaks.ts';
 import { loadFormContract, serverContract, type FormContract } from '../form/index.ts';
 import { checkFormContract, FORM_ENDPOINT } from '../form/rules.ts';
+import { checkAssets, loadRegistry, publishable, virtualAssetsModule, type Registry } from '../assets/index.ts';
+import { assetLeaks } from './asset-leaks.ts';
+import { writeCrawlFiles } from './crawl.ts';
 
 const VIRTUAL_ID = 'virtual:factory/config';
 const RESOLVED_VIRTUAL_ID = `\0${VIRTUAL_ID}`;
 const FORM_VIRTUAL_ID = 'virtual:factory/form';
 const RESOLVED_FORM_ID = `\0${FORM_VIRTUAL_ID}`;
+const ASSETS_VIRTUAL_ID = 'virtual:factory/assets';
+const RESOLVED_ASSETS_ID = `\0${ASSETS_VIRTUAL_ID}`;
+const IMAGE_EXT = /\.(png|jpe?g|webp|avif|gif|svg|ico)$/i;
 
 export class FactoryValidationError extends Error {}
 
@@ -38,7 +44,8 @@ export function modeFor(command: 'dev' | 'build' | 'preview' | 'sync', target: T
   return target === 'production' ? 'release' : 'preview';
 }
 
-function factoryIntegration(dir: string, brief: Brief, config: ResolvedConfig, form: FormContract | null): AstroIntegration {
+function factoryIntegration(dir: string, brief: Brief, config: ResolvedConfig, form: FormContract | null, registry: Registry): AstroIntegration {
+  let publishableIds: string[] = [];
   return {
     name: 'premium-website-factory',
     hooks: {
@@ -53,6 +60,19 @@ function factoryIntegration(dir: string, brief: Brief, config: ResolvedConfig, f
           );
         }
         logger.info(`brief valide — mode ${mode}, cible ${config.target}, origine ${config.origin}`);
+
+        // Registre d'actifs : une anomalie sur un actif APPROUVÉ bloque ; sur un
+        // candidat, elle est signalée (il n'est de toute façon pas publiable).
+        const assetIssues = checkAssets(registry, dir, brief, mode);
+        const blocking = assetIssues.filter((i) => registry.assets[i.path.split('.')[1] ?? '']?.status === 'approved');
+        if (blocking.length) throw new FactoryValidationError(`Registre d'actifs refusé :${formatIssues(blocking)}\n`);
+        for (const i of assetIssues.filter((x) => !blocking.includes(x))) logger.warn(`actif non publiable — ${i.path} : ${i.message}`);
+        publishableIds = publishable(registry, assetIssues);
+        logger.info(`actifs publiables : ${publishableIds.length} / ${Object.keys(registry.assets).length}`);
+        // Les images passent par le registre : aucune image déposée directement dans public/.
+        const pub = join(dir, 'public');
+        const strays = existsSync(pub) ? readdirSync(pub, { recursive: true }).map(String).filter((f) => IMAGE_EXT.test(f)) : [];
+        if (strays.length) throw new FactoryValidationError(`Images hors registre dans ${relative(process.cwd(), pub)}/ : ${strays.join(', ')} — les déclarer dans assets/registry.yaml.`);
 
         // Prototypes de direction : jamais dans un artefact de production.
         const protoDir = join(dir, 'design', 'prototypes');
@@ -70,7 +90,7 @@ function factoryIntegration(dir: string, brief: Brief, config: ResolvedConfig, f
               {
                 name: 'factory:virtual-config',
                 resolveId: (id: string) =>
-                  id === VIRTUAL_ID ? RESOLVED_VIRTUAL_ID : id === FORM_VIRTUAL_ID ? RESOLVED_FORM_ID : undefined,
+                  id === VIRTUAL_ID ? RESOLVED_VIRTUAL_ID : id === FORM_VIRTUAL_ID ? RESOLVED_FORM_ID : id === ASSETS_VIRTUAL_ID ? RESOLVED_ASSETS_ID : undefined,
                 load: (id: string) => {
                   if (id === RESOLVED_VIRTUAL_ID) return `export default ${JSON.stringify(config)};`;
                   if (id === RESOLVED_FORM_ID) {
@@ -78,6 +98,7 @@ function factoryIntegration(dir: string, brief: Brief, config: ResolvedConfig, f
                     const value = form ? { endpoint: FORM_ENDPOINT, contract: form, server: serverContract(form) } : null;
                     return `export default ${JSON.stringify(value)};`;
                   }
+                  if (id === RESOLVED_ASSETS_ID) return virtualAssetsModule(dir, registry, publishableIds);
                   return undefined;
                 },
               },
@@ -86,6 +107,10 @@ function factoryIntegration(dir: string, brief: Brief, config: ResolvedConfig, f
         });
       },
       'astro:build:done': async ({ dir: outDir, logger }) => {
+        const crawl = await writeCrawlFiles(fileURLToPath(outDir), config);
+        logger.info(`robots.txt (${config.indexable ? 'exploration autorisée' : 'Disallow: /'})${crawl.sitemap ? `, sitemap.xml (${crawl.sitemap} URL)` : ', pas de sitemap (preview)'}`);
+        const leaked = await assetLeaks(fileURLToPath(outDir), dir, registry, publishableIds);
+        if (leaked.length) throw new FactoryValidationError(`Actif non publiable dans l'artefact :\n${leaked.map((l) => `  ✗ ${l}`).join('\n')}`);
         const leaks = await findLeaks(fileURLToPath(outDir), brief, config);
         if (leaks.length) {
           throw new FactoryValidationError(
@@ -156,7 +181,7 @@ export async function factoryConfig(root: string = process.cwd()): Promise<Astro
         ],
       },
     },
-    integrations: [factoryIntegration(dir, loaded.brief, config, loadFormContract(dir))],
+    integrations: [factoryIntegration(dir, loaded.brief, config, loadFormContract(dir), loadRegistry(dir))],
   };
 }
 

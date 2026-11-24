@@ -60,9 +60,22 @@ export async function auditRelease(
 
   // Indexabilité conforme à la cible
   const html = files.filter((f) => f.endsWith('.html'));
-  const wantRobots = ctx.config.indexable ? 'index, follow' : 'noindex, nofollow';
-  const wrongRobots = html.filter((f) => !f.startsWith('prototypes/') && !read(`public/${f}`).includes(`<meta name="robots" content="${wantRobots}"`));
-  check('seo.robots-meta', wrongRobots.length === 0, `meta robots ≠ « ${wantRobots} » : ${wrongRobots.join(', ')}`);
+  // Indexabilité : en preview, AUCUNE page indexable ; en production, l'accueil
+  // l'est, et les pages utilitaires peuvent être noindex (elles sortent du sitemap).
+  const robotsOf = (f: string) => /<meta name="robots" content="([^"]*)"/.exec(read(`public/${f}`))?.[1] ?? '';
+  const pages = html.filter((f) => !f.startsWith('prototypes/'));
+  if (ctx.config.indexable) {
+    check('seo.home-indexable', robotsOf('index.html') === 'index, follow', robotsOf('index.html'));
+    const sitemap = existsSync(join(pub, 'sitemap.xml')) ? read('public/sitemap.xml') : '';
+    check('seo.sitemap', sitemap.includes(`<loc>${ctx.config.origin}/</loc>`), 'sitemap.xml absent ou sans l’accueil');
+    const leakedNoindex = pages.filter((f) => /noindex/.test(robotsOf(f))).map((f) => /<link rel="canonical" href="([^"]+)"/.exec(read(`public/${f}`))?.[1]).filter((u): u is string => Boolean(u) && sitemap.includes(`<loc>${u}</loc>`));
+    check('seo.sitemap-excludes-noindex', leakedNoindex.length === 0, leakedNoindex.join(', '));
+    check('seo.robots-txt', existsSync(join(pub, 'robots.txt')) && /Allow: \//.test(read('public/robots.txt')), 'robots.txt de production attendu');
+  } else {
+    const indexable = pages.filter((f) => !/noindex/.test(robotsOf(f)));
+    check('seo.preview-noindex', indexable.length === 0, `pages indexables en preview : ${indexable.join(', ')}`);
+    check('seo.robots-txt', existsSync(join(pub, 'robots.txt')) && /Disallow: \/\s*$/m.test(read('public/robots.txt')) && !existsSync(join(pub, 'sitemap.xml')), 'preview : robots.txt Disallow et aucun sitemap attendus');
+  }
 
   // Données non publiables, recherchées dans la seule partie servie
   const leaks = existsSync(pub) ? await findLeaks(pub, ctx.brief, ctx.config) : [];

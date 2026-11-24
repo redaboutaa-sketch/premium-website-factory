@@ -12,7 +12,7 @@ const page = t[kind];
 const email = config.facts['contact.email'];
 ---
 
-<Site title={`${page.title} — Ostral`} description={page.h1} locale={locale} alternates={{ [locale]: Astro.url.pathname }}>
+<Site title={`${page.title} — Ostral`} description={page.h1} locale={locale} alternates={{ [locale]: Astro.url.pathname }} noindex>
   <div class="wrap">
     <div class="result" role={kind === 'accepted' ? 'status' : 'alert'}>
       <h1>{page.h1}</h1>

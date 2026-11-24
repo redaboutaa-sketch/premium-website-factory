@@ -2,6 +2,19 @@
 
 Seuls figurent des résultats de commandes réellement exécutées, avec leur environnement. « Local » = session de développement (conteneur Linux, Node 26.13.1, PHP CLI 8.3.6, Docker 29.9.3, **Chromium 158 préinstallé, hors révision Playwright**). « CI » = GitHub Actions.
 
+## Incrément 4 — 2026-11-24 (registre d'actifs, publication des faits par surface)
+
+| Contrôle | Commande | Environnement | Résultat |
+|---|---|---|---|
+| Règles d'actifs, observation, module virtuel | `vitest run engine/tests/assets.test.ts` | local | 10/10 |
+| Builds réels : sitemap de production sans pages noindex ; fait « html seulement » recopié en meta → échec ; actif non approuvé demandé → échec ; image hors registre → échec ; og:image émise seulement après approbation | `vitest run tests/integration/build.test.ts` | local | 11/11 |
+| Release de production : contrôles d'indexation (accueil, sitemap, exclusion noindex, robots) | `vitest run tests/integration/release.test.ts` | local | 5/5 |
+| Fixture B : 3 schémas émis, benchmark et photo en conflit absents | `tests/integration/reuse.test.ts` | local | réussi |
+| Suite complète | `npm test` | local | 11 fichiers, 96 tests |
+| Release + recettes | `release`, `qa:release`, `qa:recipe`, `qa:deploy` | local (Docker, Chromium 158) | audit 28 contrôles ; 44/44 ; 18/18 |
+
+Décisions en attente (non prises par l'agent) : approbation de l'image de partage de la démo A ; approbation du rendu final de la piste A.
+
 ## Incrément 5 — 2026-11-24 (bascule, rollback, mise à jour de l'usine)
 
 | Contrôle | Commande | Environnement | Résultat |

@@ -11,3 +11,16 @@ declare module 'virtual:factory/form' {
   } | null;
   export default form;
 }
+
+declare module 'virtual:factory/assets' {
+  export interface PublicAsset {
+    src: import('astro').ImageMetadata;
+    alt: Record<string, string>;
+    decorative: boolean;
+    kind: string;
+  }
+  /** Lève si l'actif est inconnu ou non publiable : le build échoue. */
+  export function asset(id: string): PublicAsset;
+  const assets: Record<string, PublicAsset>;
+  export default assets;
+}
