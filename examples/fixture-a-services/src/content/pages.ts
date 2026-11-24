@@ -34,14 +34,14 @@ export const chrome = {
 export const home = {
   fr: {
     title: 'Ostral Conseil — achats des PME industrielles (démonstration)',
-    description: 'Démonstration fictive : conseil achats pour PME industrielles de 50 à 500 salariés.',
+    description: 'Démonstration fictive : conseil achats pour PME industrielles de 50 à 500 salariés.',
     kicker: 'Conseil achats · PME industrielles',
     h1: [{ text: 'Des achats pilotés,' }, { text: 'sans service achats.', em: true }],
-    lead: 'Pour les PME industrielles de 50 à 500 salariés : voir où part l’argent, structurer les fournisseurs, conduire les appels d’offres.',
+    lead: 'Pour les PME industrielles de 50 à 500 salariés : voir où part l’argent, structurer les fournisseurs, conduire les appels d’offres.',
     cta: 'Décrire votre situation',
     secondary: 'Voir un exemple de livrable',
     indexTitle: 'Registre des prestations',
-    offerTitle: 'Trois prestations. Une question de départ : où part votre argent ?',
+    offerTitle: 'Trois prestations. Une question de départ : où part votre argent ?',
     columns: ['Prestation', 'Pour vous si…', 'Vous obtenez', 'Durée'],
     services: [
       { id: 'diagnostic', title: 'Diagnostic des achats', for: 'Vous ne savez pas précisément combien vous achetez, ni à qui.', get: 'Cartographie des dépenses et plan d’action priorisé', durationFact: 'offer.diagnosticDuration' },
@@ -51,8 +51,8 @@ export const home = {
     exhibitTitle: 'À quoi ressemble un livrable',
     exhibitTag: 'Exemple fictif',
     exhibitText: [
-      'Le diagnostic se termine par une matrice de priorisation : chaque famille d’achats est placée selon son poids dans les dépenses et la difficulté à la changer.',
-      'Elle sert à décider par où commencer. Les positions ci-contre sont inventées pour l’exemple ; elles ne décrivent aucune entreprise.',
+      'Le diagnostic se termine par une matrice de priorisation : chaque famille d’achats est placée selon son poids dans les dépenses et la difficulté à la changer.',
+      'Elle sert à décider par où commencer. Les positions ci-contre sont inventées pour l’exemple ; elles ne décrivent aucune entreprise.',
     ],
     methodTitle: 'Comment se déroule un diagnostic',
     steps: [

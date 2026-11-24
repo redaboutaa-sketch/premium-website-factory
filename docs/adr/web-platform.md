@@ -11,4 +11,9 @@ Mise à jour à chaque fonctionnalité adoptée. « Testé » = observé dans le
 | API Fonts d'Astro, fichiers locaux | Polices auto-hébergées, `@font-face` + préchargement ciblé | Stable (Astro 6+) | Fallbacks déclarés | `<style>` émis hashé par la CSP native : aucune violation observée | Polices chargées vérifiées via `document.fonts` |
 | CSP native d'Astro (meta, hashes) | Politique stricte sans `unsafe-inline` | Stable (Astro 6+) | — | Incompatible avec `<ClientRouter />` (doc Astro) : navigation MPA ; balise meta sans `frame-ancestors` → en-tête HTTP requis (incr. 2) | 6 captures sans violation |
 
+| `hyphens: auto` + `overflow-wrap: break-word` | Mots longs à 200 % de texte, colonnes étroites | Stable | Repli : coupure sans tiret | Aucun | Texte agrandi 200 %, 9 pages × 2 largeurs, Chromium 158 |
+| `<details>` + tableau dans une région défilante (`tabindex=0`) | Données de la matrice accessibles sans élargir la page | Stable | Contenu lisible ouvert ou fermé | Aucun | Revue et texte 200 % |
+| Espace fine insécable (U+202F) | Ponctuation haute française non orpheline | Stable (Unicode) | Police : glyphe présent dans le sous-ensemble latin | Aucun | Vérifié dans le HTML produit |
+| Préchargement ciblé des polices (2 fichiers) | Éviter le décalage au chargement de la police du texte | Stable (API Fonts Astro) | `font-display: swap` + fallbacks | CLS 0,141 → 0 sur la page de résultat | Lighthouse 13.6.0, médiane de 3 |
+
 Envisagées, non adoptées à ce stade : container queries, `<dialog>`/Popover (menu mobile), transitions de documents entre pages, Speculation Rules. Chacune sera ajoutée ici avec son repli et ses tests si elle est retenue.

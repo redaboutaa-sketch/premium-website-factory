@@ -53,6 +53,7 @@ const id = `matrix-${locale}`;
   <figcaption>{t.caption}</figcaption>
   <details>
     <summary>{t.tableSummary}</summary>
+    <div class="table-scroll" role="region" tabindex="0" aria-label={t.tableSummary}>
     <table class="data-table">
       <thead><tr>{t.head.map((h) => <th scope="col">{h}</th>)}</tr></thead>
       <tbody>
@@ -61,6 +62,7 @@ const id = `matrix-${locale}`;
         ))}
       </tbody>
     </table>
+    </div>
   </details>
 </figure>
 

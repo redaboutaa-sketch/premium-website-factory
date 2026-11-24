@@ -25,7 +25,7 @@ const viewports = [
   { name: 'desktop', width: 1440, height: 900 },
 ] as const;
 
-const server = spawn(process.execPath, ['node_modules/astro/bin/astro.mjs', 'preview', '--port', String(PORT), '--host', '127.0.0.1'], {
+const server = spawn(process.execPath, ['node_modules/astro/bin/astro.mjs', 'preview', '--port', String(PORT), '--host', '127.0.0.1', '--ignore-lock'], {
   env: { ...process.env, ASTRO_TELEMETRY_DISABLED: '1' },
   stdio: ['ignore', 'pipe', 'inherit'],
 });

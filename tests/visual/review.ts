@@ -30,7 +30,7 @@ const viewports = [
   { name: '1440', width: 1440, height: 900 },
 ];
 
-const server = spawn(process.execPath, ['node_modules/astro/bin/astro.mjs', 'preview', '--port', String(PORT), '--host', '127.0.0.1'], {
+const server = spawn(process.execPath, ['node_modules/astro/bin/astro.mjs', 'preview', '--port', String(PORT), '--host', '127.0.0.1', '--ignore-lock'], {
   env: { ...process.env, ASTRO_TELEMETRY_DISABLED: '1' },
   stdio: ['ignore', 'pipe', 'inherit'],
 });
@@ -71,7 +71,10 @@ try {
           const min = el.matches(primary) ? 44 : inSentence ? 0 : 24;
           if (r.height < min - 0.5 || (el.matches(primary) && r.width < min - 0.5)) small.push(`${el.tagName.toLowerCase()} « ${(el.textContent ?? el.getAttribute('name') ?? '').trim().slice(0, 30)} » ${Math.round(r.width)}×${Math.round(r.height)} (min ${min})`);
         }
-        const body = parseFloat(getComputedStyle(document.querySelector('main p, main li') ?? document.body).fontSize);
+        // Texte courant = le paragraphe le plus long de <main> (pas un libellé ni un fil d'Ariane).
+        const paras = [...document.querySelectorAll<HTMLElement>('main p, main li')].filter((e) => e.offsetParent !== null);
+        const longest = paras.sort((a, b) => (b.textContent ?? '').length - (a.textContent ?? '').length)[0] ?? document.body;
+        const body = parseFloat(getComputedStyle(longest).fontSize);
         const fonts = [...new Set([...document.fonts].filter((f) => f.status === 'loaded').map((f) => f.family.replace(/-[0-9a-f]+$/, '')))];
         return { overflow, small, body, fonts };
       });

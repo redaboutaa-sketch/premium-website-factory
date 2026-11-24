@@ -4,6 +4,18 @@
 
 États : à corriger · prêt pour revue · validé par le propriétaire.
 
+## Revue du 2026-11-24 — incrément 3 : gabarit de détail
+Pages : `/prestations/{diagnostic-achats,panel-fournisseurs,appel-d-offres}/` et `/en/services/{procurement-review,supplier-base,tender-management}/`. Captures : `design/captures/site/prestations_*`, `en_services_*`, `prestations_appel-d-offres-360-zoom200.png`.
+
+| Point | Constat |
+|---|---|
+| Composition propre | Fil d'Ariane ; titre + chapeau + CTA ; **fiche** latérale (pour qui, livrable, durée, format, prérequis) ; déroulé en registre à trois colonnes au desktop ; « ce que vous recevez / ce dont nous avons besoin » ; exemple de livrable (diagnostic seulement) ; **orientation** vers une autre prestation si ce n'est pas la bonne ; autres prestations. Pas une copie de l'accueil. |
+| Faits | Durée du diagnostic = fait `proposed`, signalé « à confirmer », absent en anglais (pas de traduction inventée) ; JSON-LD `Service` + `BreadcrumbList` avec le nom légal uniquement parce qu'il est public et confirmé. |
+| Typographie | Espaces fines insécables avant ? : ; ! en français (le « ? » ne passe plus seul à la ligne). |
+| Texte agrandi 200 % | 3 défauts corrigés : grille à 11 gouttières en rem (112 px de débordement à 360), adresse e-mail insécable, mots longs (« recommandation ») — césure activée. |
+| Lecture | Paragraphe « Vos données » du contact remonté de 14 à 16 px. |
+| État | **Prêt pour revue** — approbation du rendu toujours en attente du propriétaire. |
+
 ## Revue du 2026-11-24 — site A affiné
 Captures : `examples/fixture-a-services/design/captures/site/` (sélection versionnée) ; mesures : `review.json` (Chromium 158 de l'environnement, hors révision Playwright ; 360, 390, 768, 1440 px ; @2x ; mouvement réduit ; CSP meta active).
 

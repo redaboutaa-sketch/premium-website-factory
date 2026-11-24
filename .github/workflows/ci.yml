@@ -88,10 +88,13 @@ jobs:
         run: npm run qa:release -- --release "$(ls -d .generated/releases/*/ | head -1)"
       - name: Recette nginx + PHP-FPM, trois moteurs
         run: npm run qa:recipe -- --release "$(ls -d .generated/releases/*/ | head -1)" --browsers chromium,firefox,webkit
-      - name: Revue visuelle outillée (Chromium verrouillé)
+      - name: Lighthouse sur la release servie par nginx (médiane de 3, mobile)
+        run: npm run qa:perf -- --release "$(ls -d .generated/releases/*/ | head -1)" --pages /,/prestations/diagnostic-achats/,/contact/,/en/services/procurement-review/,/contact/envoye/
+      - name: Revue visuelle outillée et texte agrandi à 200 % (Chromium verrouillé)
         run: |
           npm run build
-          node tests/visual/review.ts --pages /,/contact/,/en/,/en/contact/,/contact/envoye/ --out .generated/review
+          node tests/visual/review.ts --pages /,/prestations/diagnostic-achats/,/contact/,/en/,/en/services/procurement-review/,/contact/envoye/ --out .generated/review
+          node tests/visual/text-zoom.ts --pages /,/prestations/diagnostic-achats/,/prestations/panel-fournisseurs/,/prestations/appel-d-offres/,/contact/,/contact/envoye/,/en/,/en/services/procurement-review/,/en/contact/ --out .generated/review/zoom
       - name: Rapports
         if: always()
         # actions/upload-artifact v7.0.2 — SHA relevé par git ls-remote le 2026-11-24

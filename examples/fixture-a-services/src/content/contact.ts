@@ -11,7 +11,7 @@ export const contact = {
     optional: '(facultatif)',
     submit: 'Envoyer la demande',
     sending: 'Envoi en cours…',
-    summary: 'La demande n’a pas été envoyée. À corriger :',
+    summary: 'La demande n’a pas été envoyée. À corriger :',
     choose: 'Choisir…',
     errors: {
       required: 'Ce champ est obligatoire.',
@@ -23,13 +23,13 @@ export const contact = {
       unexpected_field: 'Champ inattendu.',
       not_a_string: 'Valeur non acceptée.',
     } satisfies Record<ErrorCode, string>,
-    accepted: 'Votre demande a été acceptée par notre serveur d’envoi (référence {ref}). Cela ne garantit pas encore sa réception : sans réponse de notre part, écrivez-nous directement.',
-    unavailable: 'L’envoi est momentanément impossible. Vos saisies sont conservées : réessayez plus tard, ou écrivez-nous directement.',
-    network: 'La connexion a échoué. Vos saisies sont conservées : réessayez, ou écrivez-nous directement.',
+    accepted: 'Votre demande a été acceptée par notre serveur d’envoi (référence {ref}). Cela ne garantit pas encore sa réception : sans réponse de notre part, écrivez-nous directement.',
+    unavailable: 'L’envoi est momentanément impossible. Vos saisies sont conservées : réessayez plus tard, ou écrivez-nous directement.',
+    network: 'La connexion a échoué. Vos saisies sont conservées : réessayez, ou écrivez-nous directement.',
     directTitle: 'Écrire directement',
     privacyTitle: 'Vos données',
     privacy: 'Les informations de ce formulaire servent uniquement à répondre à votre demande. Elles ne sont ni revendues ni utilisées pour de la prospection.',
-    retention: 'Durée de conservation :',
+    retention: 'Durée de conservation :',
   },
   en: {
     title: 'Contact — Ostral Conseil (demo)',
@@ -64,7 +64,7 @@ export const contact = {
 export const results = {
   fr: {
     accepted: { title: 'Demande transmise', h1: 'Demande transmise à notre serveur d’envoi', body: ['Votre message a été accepté par notre serveur d’envoi. Cela ne garantit pas encore sa réception.', 'Sans réponse de notre part, écrivez-nous directement.'] },
-    invalid: { title: 'Demande à corriger', h1: 'Certaines informations n’ont pas été acceptées', body: ['Un champ obligatoire est vide, trop long, ou une adresse e-mail n’est pas valide. Rien n’a été envoyé.', 'Revenez à la page précédente : votre navigateur conserve généralement vos saisies.'] },
+    invalid: { title: 'Demande à corriger', h1: 'Certaines informations n’ont pas été acceptées', body: ['Un champ obligatoire est vide, trop long, ou une adresse e-mail n’est pas valide. Rien n’a été envoyé.', 'Revenez à la page précédente : votre navigateur conserve généralement vos saisies.'] },
     unavailable: { title: 'Envoi impossible', h1: 'L’envoi est momentanément impossible', body: ['Votre demande n’a pas pu être transmise. Rien n’a été envoyé.', 'Réessayez plus tard, ou écrivez-nous directement.'] },
     back: 'Revenir au formulaire',
     home: 'Retour à l’accueil',

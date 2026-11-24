@@ -20,6 +20,8 @@ Un template : `engine/` (moteur générique, mis à jour par l'usine) + un site 
 | `npm run release -- --profile vps-nginx [--target preview\|production] [--profile-json <f>]` | assemble pages + endpoint + vendor + configs, audite, empreintes, archive. **Ne déploie rien.** |
 | `npm run qa:release -- --release <dir>` | vérifie SHA256SUMS et ré-audite une release |
 | `npm run qa:recipe -- --release <dir> [--browsers chromium,firefox,webkit]` | recette locale : nginx + PHP-FPM 8.4 en conteneurs, SMTP de capture, parcours navigateur |
+| `npm run qa:perf -- --release <dir> [--runs 3] [--pages /,/contact/]` | Lighthouse 13 (mobile, médiane de 3) sur la release servie par nginx ; budgets perf ≥ 95, JS ≤ 60 Ko, accueil ≤ 1 Mo |
+| `node tests/visual/review.ts --pages …` / `node tests/visual/text-zoom.ts --pages …` | revue outillée (360/390/768/1440) ; texte agrandi à 200 % (après `npm run build`) |
 
 Pas encore implémentées : `qa` (agrégat), `qa:remote`, `factory:upgrade`, profils `apache-shared` et `vps-proxy`, bascule/rollback serveur (incrément 5). Ne pas les présenter comme disponibles.
 

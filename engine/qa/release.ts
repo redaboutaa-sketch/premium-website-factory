@@ -104,6 +104,7 @@ export async function auditRelease(
   check('nginx.header-csp', nginx.includes(HEADER_CSP), 'en-tête CSP attendu absent');
   check('nginx.php-denied', /location ~ \\\.php\$ \{ return 404; \}/.test(nginx), 'les .php autres que l’endpoint doivent répondre 404');
   check('nginx.robots-header', ctx.config.indexable ? !nginx.includes('X-Robots-Tag') : nginx.includes('X-Robots-Tag "noindex, nofollow"'), 'X-Robots-Tag incohérent avec la cible');
+  check('nginx.compression', /\n\s*gzip on;/.test(nginx), 'compression gzip absente');
   check('nginx.no-unsafe-csp', !/unsafe-(inline|eval)/.test(nginx + html.map((f) => read(`public/${f}`)).join('')), 'unsafe-inline/unsafe-eval');
   return rows;
 }

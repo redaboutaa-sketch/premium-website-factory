@@ -2,6 +2,19 @@
 
 Seuls figurent des résultats de commandes réellement exécutées, avec leur environnement. « Local » = session de développement (conteneur Linux, Node 26.13.1, PHP CLI 8.3.6, Docker 29.9.3, **Chromium 158 préinstallé, hors révision Playwright**). « CI » = GitHub Actions.
 
+## Incrément 3 — 2026-11-24 (pages de détail, laboratoire de performance, texte agrandi)
+
+| Contrôle | Commande | Environnement | Résultat |
+|---|---|---|---|
+| Lighthouse, release servie par nginx 1.30.8 (configuration générée, gzip) | `npm run qa:perf -- --release <dir>` | local, Lighthouse 13.6.0, Chromium 158, mobile, throttling simulé, 3 exécutions/page, médiane | 5 pages (accueil, détail FR, contact, détail EN, résultat) : **performance 100, accessibilité 100, CLS 0, TBT 0 ms, LCP simulé ≈ 751 ms** ; JS 0 Ko externe, 2,9 Ko inline (contact) ; 158 Ko transférés (accueil). Rapport : `examples/fixture-a-services/design/reports/lighthouse-local.json` |
+| Défaut trouvé par la mesure | même commande | local | page de résultat : CLS 0,141 et perf 95 — police du texte non préchargée et latin-ext préchargé inutilement. **Corrigé** (préchargement Public Sans, sous-ensemble latin seul) → CLS 0, perf 100, accueil 194 → 158 Ko |
+| Texte agrandi à 200 % | `node tests/visual/text-zoom.ts` | local, Chromium 158 | 9 pages × 360/1280 px : 18/18 sans débordement ni texte coupé, **après corrections** (grille 12 colonnes limitée à ≥ 60rem, césure, colonne `minmax(0,1fr)`, tableau défilant) |
+| Revue outillée | `node tests/visual/review.ts` | local, Chromium 158 | 6 pages × 4 largeurs : aucun problème (mesure du texte courant corrigée : paragraphe le plus long) |
+| Tests | `npm test` | local | 66/66 |
+| Recette nginx + PHP-FPM | `npm run qa:recipe` | local | 44/44 |
+
+Limites : laboratoire uniquement (aucune donnée terrain, aucun INP mesuré) ; HTTP local sans TLS ni HTTP/2 ; preview `noindex` (audits SEO d'indexabilité et HTTPS non pertinents ici, non retenus comme budgets). Scores Lighthouse = indicateurs, pas validation de la direction artistique ni de l'accessibilité complète.
+
 ## Incrément 2 — 2026-11-24
 
 | Contrôle | Commande | Environnement | Résultat |

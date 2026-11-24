@@ -3,6 +3,7 @@ import config from 'virtual:factory/config';
 import Site from '../layouts/Site.astro';
 import PriorityMatrix from './PriorityMatrix.astro';
 import { chrome, home, routes, type Locale } from '../content/pages.ts';
+import { servicePath, type ServiceId } from '../content/services.ts';
 
 interface Props { locale: Locale; }
 const { locale } = Astro.props;
@@ -45,7 +46,7 @@ const duration = (s: (typeof t.services)[number]) => {
         const d = duration(s);
         return (
           <li id={s.id}>
-            <h3><span class="num">0{i + 1}</span>{s.title}</h3>
+            <h3><span class="num">0{i + 1}</span><a href={servicePath(s.id as ServiceId, locale)}>{s.title}</a></h3>
             <p><span class="label">{t.columns[1]}</span>{s.for}</p>
             <p><span class="label">{t.columns[2]}</span>{s.get}</p>
             <p>

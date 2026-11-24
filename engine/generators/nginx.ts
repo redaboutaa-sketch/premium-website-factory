@@ -81,6 +81,11 @@ server {
     autoindex off;
     error_page 404 /404.html;
 
+    gzip on;
+    gzip_vary on;
+    gzip_min_length 256;
+    gzip_types text/css application/javascript application/json image/svg+xml text/plain application/xml;
+
 ${headerLines}
 
     location ~ /\\. { return 404; }
