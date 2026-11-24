@@ -7,6 +7,7 @@
 import { parseArgs } from 'node:util';
 import { doctor } from './doctor.ts';
 import { init } from './init.ts';
+import { qaRelease, release } from './release.ts';
 import { schema } from './schema.ts';
 import { validate } from './validate.ts';
 
@@ -16,6 +17,9 @@ const HELP = `Premium Website Factory — commandes
   validate  --mode draft|preview|release [--production]   valide le brief du site courant
   doctor                                          vérifie l'environnement, sans afficher de secret
   schema    [--check]                             génère (ou vérifie) le JSON Schema du brief
+  release   --profile vps-nginx [--target preview|production] [--out <dir>] [--profile-json <fichier>]
+            assemble, audite et archive une release (ne déploie rien)
+  qa-release --release <répertoire>               vérifie empreintes et ré-audite une release
 
 Variables : FACTORY_SITE_DIR (répertoire du site, défaut site/), FACTORY_TARGET (preview|production).
 Utilisation via npm : npm run factory:validate -- --mode release`;
@@ -31,6 +35,11 @@ const { values } = parseArgs({
     production: { type: 'boolean', default: false },
     check: { type: 'boolean', default: false },
     help: { type: 'boolean', short: 'h', default: false },
+    profile: { type: 'string' },
+    target: { type: 'string' },
+    out: { type: 'string' },
+    'profile-json': { type: 'string' },
+    release: { type: 'string' },
   },
   strict: true,
 });
@@ -47,6 +56,10 @@ async function main(): Promise<number> {
       return validate({ mode: values.mode, production: values.production });
     case 'doctor':
       return doctor();
+    case 'release':
+      return release({ profile: values.profile, target: values.target, out: values.out, profileJson: values['profile-json'] });
+    case 'qa-release':
+      return qaRelease({ release: values.release });
     case 'schema':
       return schema({ check: values.check });
     default:

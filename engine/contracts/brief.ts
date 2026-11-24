@@ -156,9 +156,18 @@ const Design = z.strictObject({
   antiReferences: z.array(safeText(400)).default([]),
   brandConstraints: z.array(safeText(400)).default([]),
   availableResources: z.array(safeText(400)).default([]),
-  /** Piste retenue — décision humaine (porte G2). `null` tant qu'elle n'est pas prise. */
+  /**
+   * Porte G2 en DEUX décisions humaines distinctes :
+   *  - `selectedDirection` : choix d'une piste (orientation) ;
+   *  - `renderApproval` : approbation du rendu final de cette piste.
+   * Choisir une piste ne vaut pas approbation du rendu.
+   */
   selectedDirection: z
-    .strictObject({ id: z.string(), decidedBy: safeText(120), decidedOn: z.iso.date() })
+    .strictObject({ id: z.string(), decidedBy: safeText(120), decidedOn: z.iso.date(), note: safeText(400).optional() })
+    .nullable()
+    .default(null),
+  renderApproval: z
+    .strictObject({ approvedBy: safeText(120), approvedOn: z.iso.date(), scope: safeText(400) })
     .nullable()
     .default(null),
 });

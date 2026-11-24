@@ -17,10 +17,13 @@ Un template : `engine/` (moteur générique, mis à jour par l'usine) + un site 
 | `npm run check` | schéma à jour + `astro check` + `tsc` du moteur |
 | `npm test` | Vitest : contrats, rejets, frontières, builds réels |
 | `npm run shots:prototype` | captures des prototypes sous la CSP de l'artefact (après `npm run build`) |
+| `npm run release -- --profile vps-nginx [--target preview\|production] [--profile-json <f>]` | assemble pages + endpoint + vendor + configs, audite, empreintes, archive. **Ne déploie rien.** |
+| `npm run qa:release -- --release <dir>` | vérifie SHA256SUMS et ré-audite une release |
+| `npm run qa:recipe -- --release <dir> [--browsers chromium,firefox,webkit]` | recette locale : nginx + PHP-FPM 8.4 en conteneurs, SMTP de capture, parcours navigateur |
 
-Les commandes `release`, `qa`, `qa:release`, `qa:remote`, `factory:upgrade` du contrat public ne sont **pas encore implémentées** (incréments 2 et 5). Ne pas les présenter comme disponibles.
+Pas encore implémentées : `qa` (agrégat), `qa:remote`, `factory:upgrade`, profils `apache-shared` et `vps-proxy`, bascule/rollback serveur (incrément 5). Ne pas les présenter comme disponibles.
 
-Variables non secrètes : `FACTORY_SITE_DIR`, `FACTORY_TARGET` (`preview` par défaut, `production` exige un brief `release`), `FACTORY_OUT_DIR`, `PW_CHROMIUM_PATH`.
+Variables non secrètes : `FACTORY_SITE_DIR`, `FACTORY_TARGET` (`preview` par défaut, `production` exige un brief `release`), `FACTORY_OUT_DIR`, `FACTORY_PREVIEW_ORIGIN`, `PW_CHROMIUM_PATH`, `FACTORY_REQUIRE_PHP` (CI : PHP/Composer obligatoires), `FACTORY_PARITY_PHP_IMAGE`.
 
 ## Invariants
 1. `engine/` n'importe jamais `site/` ni `examples/` ; un site n'importe que `@engine/<module>` et `virtual:factory/config` (test : `engine/tests/boundaries.test.ts`).

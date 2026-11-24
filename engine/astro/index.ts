@@ -16,9 +16,13 @@ import { checkRules } from '../contracts/rules.ts';
 import { loadBrief, siteDir as resolveSiteDir } from '../config/load.ts';
 import { type ResolvedConfig, type Target, resolveConfig } from '../config/resolve.ts';
 import { findLeaks } from './leaks.ts';
+import { loadFormContract, serverContract, type FormContract } from '../form/index.ts';
+import { checkFormContract, FORM_ENDPOINT } from '../form/rules.ts';
 
 const VIRTUAL_ID = 'virtual:factory/config';
 const RESOLVED_VIRTUAL_ID = `\0${VIRTUAL_ID}`;
+const FORM_VIRTUAL_ID = 'virtual:factory/form';
+const RESOLVED_FORM_ID = `\0${FORM_VIRTUAL_ID}`;
 
 export class FactoryValidationError extends Error {}
 
@@ -34,13 +38,15 @@ export function modeFor(command: 'dev' | 'build' | 'preview' | 'sync', target: T
   return target === 'production' ? 'release' : 'preview';
 }
 
-function factoryIntegration(dir: string, brief: Brief, config: ResolvedConfig): AstroIntegration {
+function factoryIntegration(dir: string, brief: Brief, config: ResolvedConfig, form: FormContract | null): AstroIntegration {
   return {
     name: 'premium-website-factory',
     hooks: {
       'astro:config:setup': ({ command, injectRoute, updateConfig, logger }) => {
         const mode = modeFor(command, config.target);
-        const issues = checkRules(brief, mode);
+        const issues = [...checkRules(brief, mode), ...checkFormContract(brief, form)].filter(
+          (i) => i.phase !== 'preview' || mode !== 'draft',
+        );
         if (issues.length) {
           throw new FactoryValidationError(
             `Brief refusé pour « ${command} » (mode ${mode}, cible ${config.target}) :${formatIssues(issues)}\n`,
@@ -63,9 +69,17 @@ function factoryIntegration(dir: string, brief: Brief, config: ResolvedConfig): 
             plugins: [
               {
                 name: 'factory:virtual-config',
-                resolveId: (id: string) => (id === VIRTUAL_ID ? RESOLVED_VIRTUAL_ID : undefined),
-                load: (id: string) =>
-                  id === RESOLVED_VIRTUAL_ID ? `export default ${JSON.stringify(config)};` : undefined,
+                resolveId: (id: string) =>
+                  id === VIRTUAL_ID ? RESOLVED_VIRTUAL_ID : id === FORM_VIRTUAL_ID ? RESOLVED_FORM_ID : undefined,
+                load: (id: string) => {
+                  if (id === RESOLVED_VIRTUAL_ID) return `export default ${JSON.stringify(config)};`;
+                  if (id === RESOLVED_FORM_ID) {
+                    // Contrat public : libellés, règles, pages de résultat. Aucune adresse.
+                    const value = form ? { endpoint: FORM_ENDPOINT, contract: form, server: serverContract(form) } : null;
+                    return `export default ${JSON.stringify(value)};`;
+                  }
+                  return undefined;
+                },
               },
             ],
           },
@@ -79,6 +93,14 @@ function factoryIntegration(dir: string, brief: Brief, config: ResolvedConfig): 
           );
         }
         logger.info('aucune donnée interne ou retenue dans l’artefact');
+        if (form) {
+          const out = fileURLToPath(outDir);
+          const missing = Object.values(form.results)
+            .flatMap((r) => [r.accepted, r.invalid, r.unavailable])
+            .filter((p) => !existsSync(join(out, p, 'index.html')));
+          if (missing.length) throw new FactoryValidationError(`Pages de résultat du formulaire absentes : ${missing.join(', ')}`);
+          logger.info('pages de résultat du formulaire présentes (parcours sans JavaScript)');
+        }
       },
     },
   };
@@ -104,7 +126,8 @@ export async function factoryConfig(root: string = process.cwd()): Promise<Astro
   if (!loaded.ok || !loaded.brief) {
     throw new FactoryValidationError(`Brief invalide (${relative(root, dir) || '.'}) :${formatIssues(loaded.issues)}\n`);
   }
-  const config = resolveConfig(loaded.brief, { target });
+  // Origine de preview locale (non secrète) : utilisée seulement si le brief n'en déclare pas.
+  const config = resolveConfig(loaded.brief, { target, localPreviewOrigin: process.env.FACTORY_PREVIEW_ORIGIN?.trim() || undefined });
   const rel = (p: string) => `./${relative(root, join(dir, p)).split('\\').join('/')}`;
   return {
     root,
@@ -133,7 +156,7 @@ export async function factoryConfig(root: string = process.cwd()): Promise<Astro
         ],
       },
     },
-    integrations: [factoryIntegration(dir, loaded.brief, config)],
+    integrations: [factoryIntegration(dir, loaded.brief, config, loadFormContract(dir))],
   };
 }
 

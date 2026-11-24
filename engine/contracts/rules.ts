@@ -187,8 +187,12 @@ export function checkRules(brief: Brief, mode: Mode): Issue[] {
   }
 
   // ── Livraison ───────────────────────────────────────────────────────────
+  if (brief.design.renderApproval && !brief.design.selectedDirection) {
+    always('design.renderApproval', 'gate.g2-order', 'rendu approuvé sans direction choisie', 'Enregistrer d’abord le choix de direction.');
+  }
   if (wants('release')) {
-    if (!brief.design.selectedDirection) release('design.selectedDirection', 'gate.g2', 'aucune direction artistique validée', 'Faire choisir une piste par le propriétaire (porte G2).');
+    if (!brief.design.selectedDirection) release('design.selectedDirection', 'gate.g2', 'aucune direction artistique choisie', 'Faire choisir une piste par le propriétaire (porte G2).');
+    else if (!brief.design.renderApproval) release('design.renderApproval', 'gate.g2-render', 'direction choisie mais rendu final non approuvé', 'Faire approuver le rendu par le propriétaire après revue des captures (porte G2).');
     if (!brief.delivery.reviewer) release('delivery.reviewer', 'delivery.reviewer', 'aucun responsable de revue', 'Désigner la personne qui valide.');
   }
   return out;

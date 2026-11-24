@@ -48,6 +48,7 @@ const releaseReady = (b: Record<string, any>) => {
     }
   }
   b.design.selectedDirection = { id: 'a', decidedBy: 'test', decidedOn: '2026-11-24' };
+  b.design.renderApproval = { approvedBy: 'test', approvedOn: '2026-11-24', scope: 'test' };
   b.delivery.reviewer = 'test';
 };
 

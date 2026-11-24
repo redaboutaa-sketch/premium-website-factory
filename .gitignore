@@ -11,3 +11,4 @@ playwright-report/
 *.local.php
 # Répertoires temporaires de init
 *.init-*/
+engine/form/php/vendor/

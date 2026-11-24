@@ -1,16 +1,4 @@
 ---
-import config from 'virtual:factory/config';
-import Base from '../layouts/Base.astro';
-
-const contact = config.facts['contact.email']?.value;
+import Home from '../components/Home.astro';
 ---
-
-<Base title={`${config.brand} — conseil achats (démonstration)`} lang="fr" path="/">
-  <h1>{config.brand}</h1>
-  <p>Conseil achats pour les PME industrielles. Page provisoire : la direction artistique est en cours de choix.</p>
-  {config.target === 'preview' && (
-    <p>Prototypes de direction : <a href="/prototypes/planche/">planche</a> · <a href="/prototypes/direction-a/">piste A</a> · <a href="/prototypes/direction-b/">piste B</a></p>
-  )}
-  {typeof contact === 'string' && <p>Contact : <a href={`mailto:${contact}`}>{contact}</a></p>}
-  <p><a href="/en/" hreflang="en" lang="en">English</a></p>
-</Base>
+<Home locale="fr" />

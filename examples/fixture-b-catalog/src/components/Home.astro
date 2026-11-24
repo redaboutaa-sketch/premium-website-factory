@@ -1,0 +1,24 @@
+---
+import config from 'virtual:factory/config';
+import { paths, t, type Locale } from '../content/catalog.ts';
+import Catalog from '../layouts/Catalog.astro';
+
+interface Props { locale: Locale; }
+const { locale } = Astro.props;
+const l = t[locale];
+---
+
+<Catalog title={l.homeTitle} locale={locale} page="home">
+  <h1>{l.homeTitle}</h1>
+  <p class="lead">{l.homeLead}</p>
+  <ul class="cats">
+    {config.offer.categories.map((c) => <li><a href={`${paths.range[locale]}#${c.id}`}>{c.label[locale]}</a></li>)}
+  </ul>
+</Catalog>
+
+<style>
+  .cats { list-style: none; padding: 0; margin: 2rem 0 0; display: grid; gap: 1px; background: var(--line); border: 1px solid var(--line); max-width: 40rem; }
+  @media (min-width: 40rem) { .cats { grid-template-columns: repeat(3, 1fr); } }
+  .cats a { display: flex; align-items: center; min-height: 4.5rem; padding: 1rem; background: var(--white); font-weight: 700; font-size: 1.1rem; text-decoration: none; }
+  .cats a:hover { background: var(--leaf); }
+</style>

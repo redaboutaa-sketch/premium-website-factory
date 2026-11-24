@@ -1,4 +1,4 @@
-# Benchmark — état au 2026-11-24
+# Benchmark — état au 2026-11-24 (incomplet)
 
 ## Limite d'accès (à lever avant de conclure)
 Les quatre références retenues n'ont **pas pu être consultées** depuis la session de travail : le proxy réseau refuse ces hôtes (`connect_rejected`, HTTP 403) et la lecture textuelle par l'outil de récupération a échoué (`ENOTFOUND`). **Aucune observation visuelle ni structurelle n'a donc été faite** ; rien ci-dessous ne doit être lu comme une analyse de ces sites.
@@ -15,3 +15,6 @@ Les deux pistes de direction ont été construites à partir du brief (public, o
 
 ## Pour compléter
 Autoriser ces hôtes dans l'environnement réseau de la session (ou fournir des captures faites par le propriétaire), puis consigner pour chaque page : ce qui sert l'audience, ce qui est à éviter, le principe transférable — sans reprendre texte, marque, photographie ni composition caractéristique.
+
+## Nouvel essai (incrément 2, 2026-11-24)
+Les quatre hôtes restent refusés par le réseau de la session ; aucune autre référence pertinente n'a été trouvée accessible. **Le benchmark reste incomplet** et la direction A a été choisie par le propriétaire sur la base des prototypes, pas d'observations de références. Aucune recherche de liens n'est présentée ici comme une observation visuelle.

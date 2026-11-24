@@ -33,6 +33,7 @@ const releaseReady = (): Raw => {
     }
   }
   b.design.selectedDirection = { id: 'a', decidedBy: 'test', decidedOn: '2026-11-24' };
+  b.design.renderApproval = { approvedBy: 'test', approvedOn: '2026-11-24', scope: 'test' };
   b.delivery.reviewer = 'test';
   return b;
 };
@@ -132,6 +133,17 @@ describe('rejets selon le mode', () => {
     b.network.canonicalOrigin = 'https://www.ostral.fr';
     b.network.redirectDomains = [];
     expect(rules(b, 'draft')).toContain('identity.fictional-domain');
+  });
+  it('direction choisie sans approbation du rendu : release refusée (G2 non validée en bloc)', () => {
+    const b = releaseReady();
+    b.design.renderApproval = null;
+    expect(rules(b, 'release')).toEqual(['gate.g2-render']);
+  });
+  it('approbation du rendu sans direction choisie refusée', () => {
+    const b = base();
+    b.design.selectedDirection = null;
+    b.design.renderApproval = { approvedBy: 'x', approvedOn: '2026-11-24', scope: 'x' };
+    expect(rules(b, 'draft')).toContain('gate.g2-order');
   });
   it('démonstration jamais prête pour la production', () => {
     const r = parseBrief(stringify(releaseReady()), 'release');

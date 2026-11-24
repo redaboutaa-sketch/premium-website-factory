@@ -18,7 +18,10 @@
     "check": "node engine/cli/main.ts schema --check && astro check && tsc -p tsconfig.engine.json",
     "test": "vitest run",
     "build": "node engine/cli/main.ts validate --mode preview && astro build",
-    "shots:prototype": "node tests/prototype/capture.ts"
+    "shots:prototype": "node tests/prototype/capture.ts",
+    "release": "node engine/cli/main.ts release",
+    "qa:release": "node engine/cli/main.ts qa-release",
+    "qa:recipe": "node tests/recipe/nginx-php.ts"
   },
   "dependencies": {
     "astro": "7.4.13",

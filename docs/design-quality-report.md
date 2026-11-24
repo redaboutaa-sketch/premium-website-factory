@@ -1,25 +1,35 @@
 # Rapport de qualité de conception — fixture A (Ostral, démonstration fictive)
 
-Objet : **prototypes de direction** (incrément 1), pas le site final. Évaluation de l'agent, motivée ; aucune approbation du propriétaire n'est encore enregistrée.
+Évaluation motivée de l'agent. **Le choix de la piste A est enregistré (2026-11-24) ; l'approbation du rendu final ne l'est pas** (`design.renderApproval: null`).
 
 États : à corriger · prêt pour revue · validé par le propriétaire.
 
-## Revue du 2026-11-24 — captures `examples/fixture-a-services/design/captures/` (Chromium 158, 390×844 et 1440×900, @2x, mouvement réduit, CSP active)
+## Revue du 2026-11-24 — site A affiné
+Captures : `examples/fixture-a-services/design/captures/site/` (sélection versionnée) ; mesures : `review.json` (Chromium 158 de l'environnement, hors révision Playwright ; 360, 390, 768, 1440 px ; @2x ; mouvement réduit ; CSP meta active).
 
-| Dimension | Piste A — Registre | Piste B — Plan d'atelier | Preuve |
-|---|---|---|---|
-| Clarté | Prêt pour revue — premier écran : cible (kicker), promesse sans chiffre, deux actions | Prêt pour revue — idem + fiche de diagnostic visible dès l'arrivée | Captures desktop/mobile |
-| Identité | Prêt pour revue — repères « § », registre en sous-grille, italique rouge : reconnaissable sans logo | Prêt pour revue — trame ardoise, fiche technique, bande jaune | idem |
-| Typographie | Prêt pour revue — hiérarchie nette à 390 et 1440 px ; **textes anglais/allemand longs non testés** | Prêt pour revue — titres en capitales à surveiller en traduction | idem |
-| Composition | Prêt pour revue après correction (voir ci-dessous) | Prêt pour revue | idem |
-| Médias | Sans objet — aucune image, choix assumé faute d'actif autorisé | Sans objet | Brief `availableResources` |
-| Usage | **À corriger avant livraison** — ancres seulement, pas de formulaire réel ; clavier, zoom texte, 360 px non testés | idem | — |
-| Crédibilité | Prêt pour revue — faits `proposed` signalés « à confirmer », aucun chiffre ni témoignage inventé | idem | Brief `facts`, captures |
-| Finition | Prêt pour revue — défauts listés ci-dessous | Une pastille « à confirmer » passe à la ligne de façon peu élégante dans le module 01 (desktop) | Capture B desktop |
+| Demande du propriétaire | Réalisation | Preuve |
+|---|---|---|
+| Raccourcir l'accroche, coupures mobiles | « Des achats pilotés, / *sans service achats.* » : deux lignes imposées par blocs, identiques de 360 à 1440 px | `home-360.png`, `home-390.png`, `home-1440.png` |
+| Rythme entre sections | Trois régimes au lieu d'un : ouverture très aérée ; registre sur papier ; bande `paper-deep` pour l'aperçu de livrable ; sections courtes (méthode, exclusions) ; clôture sur encre | `home-1440.png` |
+| Lecture et cibles à 360/390 | Texte courant 16 px min., petit texte remonté à 14 px min. ; navigation, sommaire, boutons, champs ≥ 44×44 px ; autres liens ≥ 24 px (2.5.8) ; aucun débordement horizontal | `review.json` (0 problème) |
+| Aperçu de livrable fictif | Matrice de priorisation en SVG (deux géométries : large et mobile), données inventées sans montant, étiquette « exemple fictif », tableau de données équivalent dans un `<details>` | `home-390.png`, `home-1440.png` |
 
-## Défauts trouvés et corrigés pendant la revue
-1. **Piste A, desktop** : les repères « § » et le « Registre des prestations » s'empilaient au lieu d'occuper leurs colonnes. Cause : la portée des styles d'Astro ajoute un attribut au sélecteur `.grid > *`, dont la spécificité écrasait le placement par colonnes. Correction : placement par défaut déclaré sur les classes. Vérifié par nouvelle capture.
-2. **Piste A, clôture** : bloc sombre non aligné sur la grille de page. Correction : fond pleine largeur + grille intérieure. Vérifié par nouvelle capture.
+| Dimension | État | Commentaire |
+|---|---|---|
+| Clarté | Prêt pour revue | Cible, offre et suite lisibles dans le premier écran. |
+| Identité | Prêt pour revue | Repères « § », registre en sous-grille, italique rouge, matrice : reconnaissable sans logo. |
+| Typographie | Prêt pour revue | Coupures maîtrisées ; anglais testé à 390 px ; allemand non concerné (FR/EN). |
+| Composition | Prêt pour revue | Rythme varié ; registre aligné en sous-grille au desktop. |
+| Médias | Prêt pour revue | Aucune photo (aucun actif autorisé) ; SVG original à données fictives. |
+| Usage | Prêt pour revue | Formulaire avec et sans JS, résumé d'erreurs focalisé, `aria-invalid`, double envoi bloqué ; recette 44/44 (Chromium). Firefox/WebKit : CI. Zoom texte 200 % : non testé. |
+| Crédibilité | Prêt pour revue | Faits `proposed` signalés « à confirmer » ; durée non traduite en anglais plutôt qu'inventée (« — »). |
+| Finition | À corriger (mineur) | Libellés de la matrice proches de la médiane sur mobile (halo ajouté) ; pastille « à confirmer » passe à la ligne dans le registre desktop ; canonical de la page 404 retiré. |
 
-## Non couvert à ce stade
-Firefox et WebKit ; 360 px, tablette, orientation ; zoom texte 200 % ; navigation clavier complète ; libellés EN/DE ; performance (aucune mesure Lighthouse sur des prototypes). Ces contrôles accompagneront la démo complète (incrément 3).
+## Défauts trouvés et corrigés pendant cette revue
+1. Matrice illisible à 360 px (SVG réduit) → géométrie compacte dédiée, texte ≥ 11 px à l'échelle d'origine (≈ 15 px rendus).
+2. Petit texte à 13 px → 14 px minimum (`--step--1`).
+3. Formulaire collé au chapeau → espacement.
+4. Fichier caché `public/.gitkeep` servi → retiré ; l'audit de release le bloque désormais.
+
+## Historique
+- Incrément 1 : revue des prototypes A et B (grille A corrigée, clôture réalignée).
