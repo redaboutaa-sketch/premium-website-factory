@@ -13,6 +13,8 @@ Seuls figurent des résultats de commandes réellement exécutées, avec leur en
 | Tests | `npm test` | local | 66/66 |
 | Recette nginx + PHP-FPM | `npm run qa:recipe` | local | 44/44 |
 
+**CI observée — run [45397781935](https://github.com/redaboutaa-sketch/premium-website-factory/actions/runs/45397781935) (`8d71462`) : succès** (validate Node 26.13.1 et 24.22.3, recipe). Lighthouse 13.6.0 / Chromium 159 (révision verrouillée), médiane de 3 : accueil 100 (CLS 0,002), détail FR 100, **contact 97 (TBT 208 ms)**, détail EN 100, résultat 100 ; poids identiques au local (158 Ko accueil, 2,9 Ko de JS inline au contact). Le TBT du contact varie entre l'environnement local (0 ms) et le runner (208 ms) : bruit de mesure CPU probable sur le script du formulaire, à surveiller, budget respecté. Revue outillée 6 pages × 4 largeurs et texte 200 % 18/18 : réussis. Run 6 (`ceab671`) annulé par le push suivant.
+
 Limites : laboratoire uniquement (aucune donnée terrain, aucun INP mesuré) ; HTTP local sans TLS ni HTTP/2 ; preview `noindex` (audits SEO d'indexabilité et HTTPS non pertinents ici, non retenus comme budgets). Scores Lighthouse = indicateurs, pas validation de la direction artistique ni de l'accessibilité complète.
 
 ## Incrément 2 — 2026-11-24
